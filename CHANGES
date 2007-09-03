@@ -1,0 +1,23 @@
+
+Version 0.08 3.9.2007
+- Markus Baertschi, markus@markus.org
+  Get back in sync with CPAN/PAUSE
+  Fixed check for open file in Create.pm
+  Touched up the README
+
+Version 0.07
+- Markus Baertschi, markus@markus.org
+  Added image samples to sample.pl
+  Touched up the README
+  Added check for open file in JPEG/GIFImages
+
+Version 0.06
+- Fabien Tassin
+  Added support for JPEG and GIF images
+- Markus Baertschi, markus@markus.org
+  Packaged for release on CPAN
+
+Version 0.01
+- Fabien Tassin
+  Original Release
+

@@ -1,0 +1,9 @@
+^Makefile(\.old)?$
+^MANIFEST\.bak$
+.*~$
+(^|/)TAGS$
+.*\.tar\.gz$
+blib/
+pm_to_blib
+\.pdf$
+^devel/

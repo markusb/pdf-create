@@ -1,0 +1,14 @@
+MANIFEST
+MANIFEST.SKIP
+Makefile.PL
+README
+CHANGES
+lib/PDF/Create.pm
+lib/PDF/Create/Outline.pm
+lib/PDF/Create/Page.pm
+lib/PDF/Image/GIFImage.pm
+lib/PDF/Image/JPEGImage.pm
+sample.pl
+pdf-logo.gif
+pdf-logo.jpg
+t/minimal.t
