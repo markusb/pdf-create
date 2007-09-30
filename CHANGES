@@ -1,4 +1,9 @@
 
+Version 0.09 30.9.2007
+- Markus Baertschi, markus@markus.org
+  Added stringml for multi-line strings
+  Changed get_page_size to case-independent
+
 Version 0.08 3.9.2007
 - Markus Baertschi, markus@markus.org
   Get back in sync with CPAN/PAUSE

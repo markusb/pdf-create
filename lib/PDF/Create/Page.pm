@@ -309,6 +309,34 @@ sub string_width {
   $w / 1000;
 }
 
+sub printnl {
+  my $self = shift;
+  my $s    = shift;
+  my $font = shift;
+  my $size = shift;
+  my $x    = shift;
+  my $y    = shift;
+
+  # set up current_x/y used in stringml
+  $self->{'current_y'}=$y if defined $y;
+  carp 'No starting position given, using 800' if ! defined $self->{'current_y'};
+  $self->{'current_y'}=800 if ! defined $self->{'current_y'};
+  $self->{'current_x'}=$x if defined $x;
+  $self->{'current_x'}=20 if ! defined $self->{'current_x'};
+  $self->{'current_size'}=$size if defined $size;
+  $self->{'current_size'}=12 if ! defined $self->{'current_size'};
+  $self->{'current_font'}=$font if defined $font;
+  croak 'No font found !' if ! defined $self->{'current_font'};
+  # print the line(s)
+  my $n = 0;
+  for my $line (split '\n', $s) {
+    $n++;
+    $self->string($self->{'current_font'},$self->{'current_size'},$self->{'current_x'},$self->{'current_y'},$line);
+    $self->{'current_y'} = $self->{'current_y'} - $self->{'current_size'};
+  }
+  return $n;
+}
+
 sub image {
   my $self = shift;
   my %params = @_;

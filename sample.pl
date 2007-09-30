@@ -14,7 +14,7 @@ my $pdf = new PDF::Create('filename' => 'sample.pdf',
 						  'Title'    => 'Sample Document',
 						);
 
-my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
+my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('a4'));
 
 # Prepare 2 fonts
 my $f1 = $pdf->font('Subtype'  => 'Type1',

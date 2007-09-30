@@ -26,7 +26,7 @@ use PDF::Image::JPEGImage;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.08;
+$VERSION = 0.09;
 $DEBUG   = 0;
 
 sub new {
@@ -445,28 +445,28 @@ sub get_page_size {
   my $name = lc(shift);
   
   my %pagesizes = (
-     'a0'         => [ 0, 0, 2380, 3368 ],
-     'a1'         => [ 0, 0, 1684, 2380 ],
-     'a2'         => [ 0, 0, 1190, 1684 ],
-     'a3'         => [ 0, 0, 842,  1190 ],
-     'a4'         => [ 0, 0, 595,  842  ],
-     'a4L'        => [ 0, 0, 842,  595  ],
-     'a5'         => [ 0, 0, 421,  595  ],
-     'a6'         => [ 0, 0, 297,  421  ],
-     'letter'     => [ 0, 0, 612,  792  ],
-     'broadsheet' => [ 0, 0, 1296, 1584 ],
-     'ledger'     => [ 0, 0, 1224, 792  ],
-     'tabloid'    => [ 0, 0, 792,  1224 ],
-     'legal'      => [ 0, 0, 612,  1008 ],
-     'executive'  => [ 0, 0, 522,  756  ],
-     '36x36'      => [ 0, 0, 2592, 2592 ],
+     'A0'         => [ 0, 0, 2380, 3368 ],
+     'A1'         => [ 0, 0, 1684, 2380 ],
+     'A2'         => [ 0, 0, 1190, 1684 ],
+     'A3'         => [ 0, 0, 842,  1190 ],
+     'A4'         => [ 0, 0, 595,  842  ],
+     'A4L'        => [ 0, 0, 842,  595  ],
+     'A5'         => [ 0, 0, 421,  595  ],
+     'A6'         => [ 0, 0, 297,  421  ],
+     'LETTER'     => [ 0, 0, 612,  792  ],
+     'BROADSHEET' => [ 0, 0, 1296, 1584 ],
+     'LEDGER'     => [ 0, 0, 1224, 792  ],
+     'TABLOID'    => [ 0, 0, 792,  1224 ],
+     'LEGAL'      => [ 0, 0, 612,  1008 ],
+     'EXECUTIVE'  => [ 0, 0, 522,  756  ],
+     '36X36'      => [ 0, 0, 2592, 2592 ],
   );
   
-  if (!$pagesizes{$name}) {
-      $name = "a4";
+  if (!$pagesizes{uc($name)}) {
+      $name = "A4";
   }
   
-  $pagesizes{$name};
+  $pagesizes{uc($name)};
 }  
 
 sub new_page {
@@ -485,6 +485,7 @@ sub new_page {
   $page->{'rotate'}    = $params{'Rotate'}    if defined $params{'Rotate'};
 
   $self->{'current_page'} = $page;
+
   $page;
 }
 
@@ -1196,6 +1197,17 @@ Same as C<string> but right aligned.
 =item C<stringc font size x y text>
 
 Same as C<string> but centered.
+
+=item C<printnl text font size x y>
+
+Similar to C<string> but parses the string for newline and prints each part
+on a separate line. Lines spacing is the same as the font-size. Returns the
+number of lines.
+
+Note the different parameter sequence. The first call should specify all
+parameters, font is the absolute minimum, a warning will be given for the
+missing y position and 800 will be assumed. All subsequent invocations can
+omit all but the string parameters.
 
 =item C<string_width font text>
 
