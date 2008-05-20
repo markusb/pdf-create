@@ -217,6 +217,7 @@ sub setrgbcolorstroke {
   my $g    = shift;
   my $b    = shift;
 
+  croak "Error setting colors, need three values" if ! defined $b;
   $self->{'pdf'}->page_stream($self);
   $self->{'pdf'}->add("$r $g $b RG");
 }
