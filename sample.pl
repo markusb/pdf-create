@@ -3,26 +3,25 @@
 # sample PDF::Create usage
 #
 
-BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
 
 my $pdf = new PDF::Create('filename' => 'sample.pdf',
-		   			      'Version'  => 1.2,
-					      'PageMode' => 'UseOutlines',
-					      'Author'   => 'Fabien Tassin',
-						  'Title'    => 'Sample Document',
+			  'Version'  => 1.2,
+			  'PageMode' => 'UseOutlines',
+			  'Author'   => 'John Doe',
+			  'Title'    => 'Sample Document',
 						);
 
 my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('a4'));
 
 # Prepare 2 fonts
 my $f1 = $pdf->font('Subtype'  => 'Type1',
-	 	   	        'Encoding' => 'WinAnsiEncoding',
+	 	    'Encoding' => 'WinAnsiEncoding',
 			        'BaseFont' => 'Helvetica');
 my $f2 = $pdf->font('Subtype'  => 'Type1',
-			        'Encoding' => 'WinAnsiEncoding',
-			        'BaseFont' => 'Helvetica-Bold');
+		    'Encoding' => 'WinAnsiEncoding',
+		    'BaseFont' => 'Helvetica-Bold');
 
 # Prepare a Table of Content
 my $toc = $pdf->new_outline('Title' => 'Sample Document');

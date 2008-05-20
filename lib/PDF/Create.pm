@@ -901,8 +901,8 @@ use PDF::Create;
 my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
 			  'Version'      => 1.2,
 			  'PageMode'     => 'UseOutlines',
-			  'Author'       => 'Fabien Tassin',
-			  'Title'        => 'My title',
+			  'Author'       => 'John Doe',
+			  'Title'        => 'My Title',
 			  'CreationDate' => [ localtime ],
 			 );
 # add a A4 sized page
@@ -939,7 +939,7 @@ $toc->new_outline('Title' => 'Section 3');
 $pdf->new_outline('Title' => 'Summary');
 
 # Add something to the first page
-$page->stringc($f1, 20, 306, 300, 'by Fabien Tassin <fta@sofaraway.org>');
+$page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
 
 # Add the missing PDF objects and a the footer then close the file
 $pdf->close;
@@ -972,9 +972,7 @@ This will create an empty PDF structure. A lot of attributes can be
 used:
 
   - filename: destination file that will contain the resulting
-    PDF or ...
-
-  - fh: ... an already opened filehandle
+    PDF or an already opened filehandle or '-' for stdout.
 
   - Version: can be 1.0 to 1.3 (default: 1.2)
 
@@ -1013,7 +1011,7 @@ Example:
   my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
                             'Version'      => 1.2,
                             'PageMode'     => 'UseOutlines',
-                            'Author'       => 'Fabien Tassin',
+                            'Author'       => 'John Doe',
                             'Title'        => 'My title',
 			    'CreationDate' => [ localtime ],
                            );

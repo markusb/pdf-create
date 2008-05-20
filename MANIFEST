@@ -3,6 +3,7 @@ MANIFEST.SKIP
 Makefile.PL
 README
 CHANGES
+TODO
 lib/PDF/Create.pm
 lib/PDF/Create/Outline.pm
 lib/PDF/Create/Page.pm
@@ -11,4 +12,10 @@ lib/PDF/Image/JPEGImage.pm
 sample.pl
 pdf-logo.gif
 pdf-logo.jpg
-t/minimal.t
+t/1-simple.t
+t/2-jpeg.t
+t/pdf-logo.jpg
+t/3-gif.t
+t/pdf-logo.gif
+t/4-graphics.t
+t/5-complex.t
