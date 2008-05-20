@@ -896,56 +896,53 @@ PDF::Create - create PDF files
 
 =head1 SYNOPSIS
 
-    use PDF::Create;
+use PDF::Create;
 
-    my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
-			      'Version'      => 1.2,
-			      'PageMode'     => 'UseOutlines',
-			      'Author'       => 'Fabien Tassin',
-			      'Title'        => 'My title',
-			      'CreationDate' => [ localtime ],
+my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+			  'Version'      => 1.2,
+			  'PageMode'     => 'UseOutlines',
+			  'Author'       => 'Fabien Tassin',
+			  'Title'        => 'My title',
+			  'CreationDate' => [ localtime ],
 			 );
-    my $root = $pdf->new_page('MediaBox' => [ 0, 0, 612, 792 ]);
-	
-	# add a A4 sized page
-    my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
+# add a A4 sized page
+my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
 
-    # Add a page which inherits its attributes from $root
-    my $page = $root->new_page;
+# Add a page which inherits its attributes from $root
+my $page = $root->new_page;
 
-    # Prepare 2 fonts
-    my $f1 = $pdf->font('Subtype'  => 'Type1',
- 	   	        'Encoding' => 'WinAnsiEncoding',
- 		        'BaseFont' => 'Helvetica');
-    my $f2 = $pdf->font('Subtype'  => 'Type1',
- 		        'Encoding' => 'WinAnsiEncoding',
- 		        'BaseFont' => 'Helvetica-Bold');
+# Prepare 2 fonts
+my $f1 = $pdf->font('Subtype'  => 'Type1',
+   		    'Encoding' => 'WinAnsiEncoding',
+ 		    'BaseFont' => 'Helvetica');
+my $f2 = $pdf->font('Subtype'  => 'Type1',
+ 		    'Encoding' => 'WinAnsiEncoding',
+ 		    'BaseFont' => 'Helvetica-Bold');
 
-    # Prepare a Table of Content
-    my $toc = $pdf->new_outline('Title' => 'Document',
-                                'Destination' => $page);
-    $toc->new_outline('Title' => 'Section 1');
-    my $s2 = $toc->new_outline('Title' => 'Section 2',
-                               'Status' => 'closed');
-    $s2->new_outline('Title' => 'Subsection 1');
+# Prepare a Table of Content
+my $toc = $pdf->new_outline('Title' => 'Document',
+                            'Destination' => $page);
+$toc->new_outline('Title' => 'Section 1');
+my $s2 = $toc->new_outline('Title' => 'Section 2',
+                           'Status' => 'closed');
+$s2->new_outline('Title' => 'Subsection 1');
 
-    $page->stringc($f2, 40, 306, 426, "PDF::Create");
-    $page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
+$page->stringc($f2, 40, 306, 426, "PDF::Create");
+$page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
 
-    # Add another page
-    my $page2 = $root->new_page;
-    $page2->line(0, 0, 612, 792);
-    $page2->line(0, 792, 612, 0);
+# Add another page
+my $page2 = $root->new_page;
+$page2->line(0, 0, 612, 792);
+$page2->line(0, 792, 612, 0);
 
-    $toc->new_outline('Title' => 'Section 3');
-    $pdf->new_outline('Title' => 'Summary');
+$toc->new_outline('Title' => 'Section 3');
+$pdf->new_outline('Title' => 'Summary');
 
-    # Add something to the first page
-    $page->stringc($f1, 20, 306, 300,
-                   'by Fabien Tassin <fta@sofaraway.org>');
+# Add something to the first page
+$page->stringc($f1, 20, 306, 300, 'by Fabien Tassin <fta@sofaraway.org>');
 
-    # Add the missing PDF objects and a the footer then close the file
-    $pdf->close;
+# Add the missing PDF objects and a the footer then close the file
+$pdf->close;
 
 =head1 DESCRIPTION
 
@@ -1013,13 +1010,13 @@ used:
 
 Example:
 
-        my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
-                                  'Version'      => 1.2,
-                                  'PageMode'     => 'UseOutlines',
-                                  'Author'       => 'Fabien Tassin',
-                                  'Title'        => 'My title',
-				  'CreationDate' => [ localtime ],
-                             );
+  my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+                            'Version'      => 1.2,
+                            'PageMode'     => 'UseOutlines',
+                            'Author'       => 'Fabien Tassin',
+                            'Title'        => 'My title',
+			    'CreationDate' => [ localtime ],
+                           );
 
 The created object is returned.
 
@@ -1081,6 +1078,8 @@ for example the dimensions of an A4 sheet of paper. The coordinates
 are measured in default user space units. It must be the reference
 of a 4 values array. You can use C<get_page_size> to get the size of
 standard paper sizes.
+  C<get_page_size> knows about A0-A6, A4L (landscape), Letter, Legal,
+Broadsheet, Ledger, Tabloid, Executive and 36x36.
 
 - CropBox: Rectangle specifying the default clipping region for
 the page when displayed or printed. The default is the value of
@@ -1222,6 +1221,11 @@ Draw a line between (x1, y1) and (x2, y2).
 
 Set the width of subsequent lines to w points.
 
+=item C<setrgbcolor r g b>
+
+Set the color of the subsequent drawing operations. R,G and B is a value
+between 0.0 and 1.0.
+
 =head2 Low level drawing methods
 
 =item C<moveto x y>
@@ -1255,6 +1259,14 @@ Ends the path without filling or stroking it.
 =item C<stroke>
 
 Strokes the path.
+
+A typical usage is 
+
+$page->newpath;
+$page->setrgbcolorstroke 0.1 0.3 0.8;
+$page->moveto 100 100;
+$page->lineto 200 100;
+$page->stroke;
 
 =item C<closestroke>
 
@@ -1292,13 +1304,13 @@ Parameters can be:
 
 L<PDF::Create::Page(3)>, L<perl(1)>
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Fabien Tassin (fta@sofaraway.org)
 
 GIF and JPEG-support: Michael Gross (mdgrosse@sbox.tugraz.at)
 
-Maintenence since 2007: Markus Baertschi (markus@markus.org)
+Maintened since 2007: Markus Baertschi (markus@markus.org)
 
 =head1 COPYRIGHT
 
