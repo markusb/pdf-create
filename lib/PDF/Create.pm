@@ -26,7 +26,7 @@ use PDF::Image::JPEGImage;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.9;
+$VERSION = 0.9a;
 $DEBUG   = 0;
 
 sub new {
@@ -896,72 +896,72 @@ PDF::Create - create PDF files
 
 =head1 SYNOPSIS
 
-use PDF::Create;
+  use PDF::Create;
 
-my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
-			  'Version'      => 1.2,
-			  'PageMode'     => 'UseOutlines',
-			  'Author'       => 'John Doe',
-			  'Title'        => 'My Title',
-			  'CreationDate' => [ localtime ],
-			 );
-# add a A4 sized page
-my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
+  my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+			    'Version'      => 1.2,
+			    'PageMode'     => 'UseOutlines',
+			    'Author'       => 'John Doe',
+			    'Title'        => 'My Title',
+			    'CreationDate' => [ localtime ],
+			   );
+  # add a A4 sized page
+  my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
 
-# Add a page which inherits its attributes from $root
-my $page = $root->new_page;
+  # Add a page which inherits its attributes from $root
+  my $page = $root->new_page;
 
-# Prepare 2 fonts
-my $f1 = $pdf->font('Subtype'  => 'Type1',
-   		    'Encoding' => 'WinAnsiEncoding',
- 		    'BaseFont' => 'Helvetica');
-my $f2 = $pdf->font('Subtype'  => 'Type1',
- 		    'Encoding' => 'WinAnsiEncoding',
- 		    'BaseFont' => 'Helvetica-Bold');
+  # Prepare 2 fonts
+  my $f1 = $pdf->font('Subtype'  => 'Type1',
+   		      'Encoding' => 'WinAnsiEncoding',
+ 		      'BaseFont' => 'Helvetica');
+  my $f2 = $pdf->font('Subtype'  => 'Type1',
+ 		      'Encoding' => 'WinAnsiEncoding',
+ 		      'BaseFont' => 'Helvetica-Bold');
 
-# Prepare a Table of Content
-my $toc = $pdf->new_outline('Title' => 'Document',
-                            'Destination' => $page);
-$toc->new_outline('Title' => 'Section 1');
-my $s2 = $toc->new_outline('Title' => 'Section 2',
-                           'Status' => 'closed');
-$s2->new_outline('Title' => 'Subsection 1');
+  # Prepare a Table of Content
+  my $toc = $pdf->new_outline('Title' => 'Document',
+                              'Destination' => $page);
+  $toc->new_outline('Title' => 'Section 1');
+  my $s2 = $toc->new_outline('Title' => 'Section 2',
+                             'Status' => 'closed');
+  $s2->new_outline('Title' => 'Subsection 1');
 
-$page->stringc($f2, 40, 306, 426, "PDF::Create");
-$page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
+  $page->stringc($f2, 40, 306, 426, "PDF::Create");
+  $page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
 
-# Add another page
-my $page2 = $root->new_page;
-$page2->line(0, 0, 612, 792);
-$page2->line(0, 792, 612, 0);
+  # Add another page
+  my $page2 = $root->new_page;
+  $page2->line(0, 0, 612, 792);
+  $page2->line(0, 792, 612, 0);
 
-$toc->new_outline('Title' => 'Section 3');
-$pdf->new_outline('Title' => 'Summary');
+  $toc->new_outline('Title' => 'Section 3');
+  $pdf->new_outline('Title' => 'Summary');
 
-# Add something to the first page
-$page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
+  # Add something to the first page
+  $page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
 
-# Add the missing PDF objects and a the footer then close the file
-$pdf->close;
+  # Add the missing PDF objects and a the footer then close the file
+  $pdf->close;
 
 =head1 DESCRIPTION
 
-PDF::Create allows you to create PDF documents using a large number
-of primitives, and emit the result as a PDF file or stream.
+PDF::Create allows you to create PDF documents using a number of
+primitives. The result is as a PDF file or stream.
+
 PDF stands for Portable Document Format.
 
 Documents can have several pages, a table of content, an information
-section and many other PDF elements. More functionnalities will be
-added as needs arise.
+section and many other PDF elements.
 
-Documents are constructed on the fly so the memory footprint is not
+Documents are built on the fly so the memory footprint is not
 tied to the size of the pages but only to their number.
 
 =head1 Methods
 
 =over 5
 
-=item C<new>
+=head3 new
 
 To create a new PDF, send a new() message to the PDF::Create class.
 For example:
@@ -1018,22 +1018,24 @@ Example:
 
 The created object is returned.
 
-=item C<close>
+=head3 close
 
 Add the missing sections needed to obtain a complete and valid PDF
 document then close the file if needed.
+Most of the real work building the PDF is performed in the
+close method.
 
-=item C<get_data>
+=head3 get_data
 
 If you didn't ask the $pdf object to write its output to a file, you
 can pick up the pdf code by calling this method. It returns a big string.
 You need to call C<close> first, mind.
 
-=item C<add_comment [string]>
+=head3 add_comment [string]
 
 Add a comment to the document.
 
-=item C<new_outline [parameters]>
+=head3 new_outline [parameters]
 
 Add an outline to the document using the given parameters.
 Return the newly created outline.
@@ -1051,15 +1053,15 @@ outline object.
 
 Example:
 
-          my $outline = $pdf->new_outline('Title' => 'Item 1',
-                                          'Destination' => $page);
-          $outline->new_outline('Title' => 'Item 1.1');
-          $pdf->new_outline('Title' => 'Item 1.2',
-                            'Parent' => $outline);
-          $pdf->new_outline('Title' => 'Item 2');
+  my $outline = $pdf->new_outline('Title' => 'Item 1',
+                                  'Destination' => $page);
+  $outline->new_outline('Title' => 'Item 1.1');
+  $pdf->new_outline('Title' => 'Item 1.2',
+                    'Parent' => $outline);
+  $pdf->new_outline('Title' => 'Item 2');
 
 
-=item C<new_page>
+=head3 new_page
 
 Add a page to the document using the given parameters.
 Return the newly created page.
@@ -1105,14 +1107,14 @@ fall outside the bleed box. The default is the value of the CropBox.
 clockwise when it is displayed or printed. This value must be zero
 (the default) or a multiple of 90.
 
-=item C<get_page_size>
+=head3 get_page_size
 
 Returns the size of standard paper sizes to use for MediaBox-parameter
 of C<new_page>. C<get_page_size> has one required parameter to 
 specify the paper name. Possible values are a0-a6, letter, broadsheet,
 ledger, tabloid, legal, executive and 36x36. Default is a4.
 
-=item C<font>
+=head3 font
 
 Prepare a font using the given arguments. This font will be added
 to the document only if it is used at least once before the close method
@@ -1141,7 +1143,7 @@ ones.
 
 The default value is Helvetica.
 
-=item C<image filename>
+=head3 image filename
 
 Prepare an XObject (image) using the given arguments. This image will be added
 to the document only if it is used at least once before the close method
@@ -1164,13 +1166,13 @@ drawing (using PostScript like paths) and one for writing.
 Some methods are not described here because they must not be called
 directly (e.g. C<new> and C<add>).
 
-=item C<new_page params>
+=head3 new_page params
 
 Add a sub-page to the current page.
 
 See C<PDF::Create::new_page>
 
-=item C<string font size x y text>
+=head3 string font size x y text
 
 Add text to the current page using the font object at the given size and
 position. The point (x, y) is the bottom left corner of the rectangle
@@ -1183,19 +1185,19 @@ Example :
  		        'BaseFont' => 'Helvetica');
     $page->string($f1, 20, 306, 396, "some text");
 
-=item C<stringl font size x y text>
+=head3 stringl font size x y text
 
 Same as C<string>.
 
-=item C<stringr font size x y text>
+=head3 stringr font size x y text
 
 Same as C<string> but right aligned.
 
-=item C<stringc font size x y text>
+=head3 stringc font size x y text
 
 Same as C<string> but centered.
 
-=item C<printnl text font size x y>
+=head3 printnl text font size x y
 
 Similar to C<string> but parses the string for newline and prints each part
 on a separate line. Lines spacing is the same as the font-size. Returns the
@@ -1206,55 +1208,55 @@ parameters, font is the absolute minimum, a warning will be given for the
 missing y position and 800 will be assumed. All subsequent invocations can
 omit all but the string parameters.
 
-=item C<string_width font text>
+=head3 string_width font text
 
 Return the size of the text using the given font in default user space units.
 This does not contain the size of the font yet.
 
-=item C<line x1 y1 x2 y2>
+=head3 line x1 y1 x2 y2
 
 Draw a line between (x1, y1) and (x2, y2).
 
-=item C<set_width w>
+=head3 set_width w
 
 Set the width of subsequent lines to w points.
 
-=item C<setrgbcolor r g b>
+=head3 setrgbcolor r g b
 
 Set the color of the subsequent drawing operations. R,G and B is a value
 between 0.0 and 1.0.
 
 =head2 Low level drawing methods
 
-=item C<moveto x y>
+=head3 moveto x y
 
 Moves the current point to (x, y), omitting any connecting line segment.
 
-=item C<lineto x y>
+=head3 lineto x y
 
 Appends a straight line segment from the current point to (x, y).
 The current point is (x, y).
 
-=item C<curveto x1 y1 x2 y2 x3 y3>
+=head3 curveto x1 y1 x2 y2 x3 y3
 
 Appends a Bezier curve to the path. The curve extends from the current
 point to (x3 ,y3) using (x1 ,y1) and (x2 ,y2) as the Bezier control
 points. The new current point is (x3 ,y3).
 
-=item C<rectangle x y w h>
+=head3 rectangle x y w h
 
 Adds a rectangle to the current path.
 
-=item C<closepath>
+=head3 closepath
 
 Closes the current subpath by appending a straight line segment
 from the current point to the starting point of the subpath.
 
-=item C<newpath>
+=head3 newpath
 
 Ends the path without filling or stroking it.
 
-=item C<stroke>
+=head3 stroke
 
 Strokes the path.
 
@@ -1266,19 +1268,19 @@ $page->moveto 100 100;
 $page->lineto 200 100;
 $page->stroke;
 
-=item C<closestroke>
+=head3 closestroke
 
 Closes and strokes the path.
 
-=item C<fill>
+=head3 fill
 
 Fills the path using the non-zero winding number rule.
 
-=item C<fill2>
+=head3 fill2
 
 Fills the path using the even-odd rule
 
-=item C<image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew>
+=head3 image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew
 
 Inserts an image.
 
@@ -1318,5 +1320,7 @@ this copyright notice remain attached to the file. You may
 modify this module as you wish, but if you redistribute a
 modified version, please attach a note listing the modifications
 you have made.
+
+Copyright 2007, Markus Baertschi
 
 =cut
