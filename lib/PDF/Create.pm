@@ -7,28 +7,40 @@
 # Version: 0.08
 #
 # Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
-# Copyright 2007  Markus Baertschi
+# Copyright 2007      Markus Baertschi <markus@markus.org>
 #
-# 03.09.2007  0.08  Markus Baertschi
-#                   - Fixed error cheking on file open
+# 03.09.2007  0.08  Markus Baertschi <markus@markus.org>
+#                   - Fixed error checking on file open
+#    04.2008  0.09  Markus Baertschi <markus@markus.org>
+#                   - Clarified documentation
+# 28.05.2008  0.10  Markus Baertschi <markus@markus.org>
+#                   - Additional error checking in encode
+#                   - Made DEBUG accessible from outside
+#                   - Add more debug statements
+#                   - Fixed 'Rotate'
+#                   - Added 'number' to encode (required for 'Rotate')
 
 package PDF::Create;
 
+our $VERSION = "0.10";
+our $DEBUG   = 0;
+
 use strict;
-use vars qw(@ISA @EXPORT $VERSION $DEBUG);
-use Exporter;
-use Carp;
+use Carp qw(confess croak cluck carp);
 use FileHandle;
 use PDF::Create::Page;
 use PDF::Create::Outline;
 use PDF::Image::GIFImage;
 use PDF::Image::JPEGImage;
+use vars qw($DEBUG);
 
+our (@ISA, @EXPORT, @EXPORT_OK, @EXPORT_FAIL);
+require Exporter;
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.9a;
-$DEBUG   = 0;
+@EXPORT_OK = qw($DEBUG $VERSION);
 
+# Create a new object
 sub new {
   my $this = shift;
   my %params = @_;
@@ -87,6 +99,7 @@ sub close {
   my $self = shift;
   my %params = @_;
 
+  $self->debug("Closing PDF");
   $self->page_stream;
   $self->add_outlines if defined $self->{'outlines'};
   $self->add_catalog;
@@ -174,6 +187,10 @@ sub add_comment {
 sub encode {
   my $type = shift;
   my $val = shift;
+
+  if ($DEBUG) {if ($val) {warn("encode: $type $val");}
+                    else {warn("encode: $type (no val)");}}
+  if (! $type) {cluck "PDF::Create::encode: empty argument, called by "; return 1}
   ($type eq 'null' || $type eq 'number') && do {
     1; # do nothing
   } || $type eq 'cr' && do {
@@ -183,9 +200,12 @@ sub encode {
     $val eq '0' ? 'false' : 'true';
   } || $type eq 'string' && do {
     $val = "($val)"; # TODO: split it. Quote parentheses.
+  } || $type eq 'number' && do {
+    $val = "$val";
   } || $type eq 'name' && do {
     $val = "/$val";
   } || $type eq 'array' && do {
+    # array, encode contents individually
     my $s = '[';
     for my $v (@$val) {
       $s .= &encode($$v[0], $$v[1]) . " ";
@@ -222,7 +242,7 @@ sub encode {
     $s .= ">>" . &encode('cr') . "stream" . &encode('cr');
     $s .= $data . &encode('cr');
     $val = $s . "endstream" . &encode('cr');
-  } || die "Error: unknown type '$type'";
+  } || confess "Error: unknown type '$type'";
   # TODO: add type 'text';
   $val;
 }
@@ -311,6 +331,7 @@ sub stream {
 sub add_info {
   my $self = shift;
 
+  $self->debug("add_info");
   my %params = @_;
   $params{'Author'}       = $self->{'Author'}   if defined $self->{'Author'};
   $params{'Creator'}      = $self->{'Creator'}  if defined $self->{'Creator'};
@@ -345,6 +366,7 @@ sub add_info {
 sub add_catalog {
   my $self = shift;
 
+  $self->debug("add_catalog");
   my %params = %{$self->{'catalog'}};
   # Type (mandatory)
   $self->{'catalog'} = $self->reserve('Catalog');
@@ -369,6 +391,7 @@ sub add_catalog {
 sub add_outlines {
   my $self = shift;
 
+  $self->debug("add_outlines");
   my %params = @_;
   my $outlines = $self->reserve("Outlines");
 
@@ -492,6 +515,7 @@ sub new_page {
 sub add_pages {
   my $self = shift;
 
+  $self->debug("add_pages");
   # $self->page_stream;
   my %params = @_;
   # Type (required)
@@ -510,6 +534,7 @@ sub add_pages {
   $self->cr;
 
   for my $font (sort keys %{$self->{'fonts'}}) {
+    $self->debug("add_pages: font: $font");
     $self->{'fontobj'}{$font} = $self->reserve('Font');
     $self->add_object(
       $self->indirect_obj(
@@ -518,6 +543,7 @@ sub add_pages {
   }
 
   for my $xobject (sort keys %{$self->{'xobjects'}}) {
+    $self->debug("add_pages: object: $xobject");
     $self->{'xobj'}{$xobject} = $self->reserve('XObject');
     $self->add_object(
       $self->indirect_obj(
@@ -534,6 +560,7 @@ sub add_pages {
 
   for my $page ($self->{'pages'}->list) {
     my $name = $page->{'name'};
+    $self->debug("add_pages: page: $name");
     my $type = 'Page' .
       (defined $page->{'Kids'} && scalar @{$page->{'Kids'}} ? 's' : '');
     # Type (required)
@@ -585,7 +612,7 @@ sub add_pages {
 	$$content{$K} = $self->array(@$l);
       }
     }
-    $$content{'Rotate'} = $page->{'rotate'} if defined $page->{'rotate'};
+    $$content{'Rotate'} = $self->number($page->{'rotate'}) if defined $page->{'rotate'};
     if ($type eq 'Page') {
       $$content{'Parent'} = $self->indirect_ref(@{$page->{'Parent'}{'id'}});
       # Content
@@ -726,6 +753,8 @@ sub cr {
 sub page_stream {
   my $self = shift;
   my $page = shift;
+#  $self->debug("page_stream: page=$page");
+
   if (defined $self->{'reservations'}{'stream_length'}) {
     ## If it is the same page, use the same stream.
     $self->cr, return if defined $page && defined $self->{'stream_page'} &&
