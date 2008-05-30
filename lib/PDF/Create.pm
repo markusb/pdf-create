@@ -1134,7 +1134,8 @@ fall outside the bleed box. The default is the value of the CropBox.
 
 - Rotate: Specifies the number of degrees the page should be rotated
 clockwise when it is displayed or printed. This value must be zero
-(the default) or a multiple of 90.
+(the default) or a multiple of 90. The entire page, including contents
+is rotated.
 
 =head3 get_page_size
 
@@ -1164,18 +1165,18 @@ In this version, only WinAnsiEncoding is supported. This is the default
 value.
 
 - BaseFont: The PostScript name of the font. It can be one of the following
-base font: Courier, Courier-Bold, Courier-BoldOblique, Courier-Oblique,
+base fonts: Courier, Courier-Bold, Courier-BoldOblique, Courier-Oblique,
 Helvetica, Helvetica-Bold, Helvetica-BoldOblique, Helvetica-Oblique,
-Times-Roman, Times-Bold, Times-Italic, Times-BoldItalic, Symbol or
-ZapfDingbats. All of them are supported in this version except the last two
-ones.
+Times-Roman, Times-Bold, Times-Italic or Times-BoldItalic.
 
-The default value is Helvetica.
+The Symbol or ZapfDingbats fonts are not supported in this version.
+
+The default font is Helvetica.
 
 =head3 image filename
 
 Prepare an XObject (image) using the given arguments. This image will be added
-to the document only if it is used at least once before the close method
+to the document if it is referenced at least once before the close method
 is called. In this version GIF, interlaced GIF and JPEG is supported. 
 Usage of interlaced GIFs are slower because they are decompressed, modified 
 and compressed again.
