@@ -20,13 +20,14 @@
 #                   - Fixed 'Rotate'
 #                   - Added 'number' to encode (required for 'Rotate')
 #                   - More Comments and POD Cleanup
-# 31.05.2008  0.11  Markus Baertschi <markus@markus.org>
+#                   - Never released due to cpan versioning limitation
+# 31.05.2008  1.0   Markus Baertschi <markus@markus.org>
 # 		    - Added sample-cgi.pl
 # 		    - Added cgi example to POD
 
 package PDF::Create;
 
-our $VERSION = "0.10";
+our $VERSION = "1.00";
 our $DEBUG   = 0;
 
 use strict;
@@ -1329,11 +1330,11 @@ Strokes the path.
 
 A typical usage is 
 
-	$page->newpath;
-	$page->setrgbcolorstroke 0.1 0.3 0.8;
-	$page->moveto 100 100;
-	$page->lineto 200 100;
-	$page->stroke;
+  $page->newpath;
+  $page->setrgbcolorstroke 0.1 0.3 0.8;
+  $page->moveto 100 100;
+  $page->lineto 200 100;
+  $page->stroke;
 
 =item * closestroke
 
