@@ -2,11 +2,12 @@
 
 # PDF::Create::Outline - PDF outlines tree
 # Author: Fabien Tassin <fta@sofaraway.org>
-# Version: 0.01
+# Version: 1.00
 # Copyright 1999 Fabien Tassin <fta@sofaraway.org>
 
 # bugs :
-# - ...
+# 31.05.2008  1.00  Markus Baertschi
+#                   - Changed vesion to go with PDF::Create
 
 package PDF::Create::Outline;
 
@@ -19,7 +20,7 @@ use Data::Dumper;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.01;
+$VERSION = 1.00;
 $DEBUG   = 0;
 
 sub new {

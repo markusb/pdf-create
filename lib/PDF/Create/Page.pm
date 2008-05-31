@@ -7,6 +7,8 @@
 
 # bugs :
 # - ...
+# 31.05.2008  1.00  Markus Baertschi
+# 		    - Changed version to 1.00 to go with PDF::Create
 
 package PDF::Create::Page;
 
@@ -19,7 +21,7 @@ use Data::Dumper;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.06;
+$VERSION = 1.00;
 $DEBUG   = 0;
 
 my $font_widths = &init_widths;

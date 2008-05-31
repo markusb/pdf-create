@@ -10,6 +10,8 @@
 # 27.11.2001  -     Bugfix, now also works on Windows (binmode) 
 # 03.09.2007  0.07  Markus
 #                   - Added error checking after file open
+# 31.05.2008  1.00  Markus Baertschi
+#                   - Chnaged version to 1.00 for correlation with PDF::Create
 
 package GIFImage;
 use strict;
@@ -19,7 +21,7 @@ use FileHandle;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.07;
+$VERSION = 1.00;
 $DEBUG   = 0;
 
 sub new {
@@ -343,9 +345,6 @@ sub DoExtension {
 
     1;
 } 
-
-
-
 
 sub Open {
     my $self = shift;

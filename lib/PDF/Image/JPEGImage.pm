@@ -2,13 +2,15 @@
 
 # PDF::Image::JPEGImage - JPEG image support
 # Author: Michael Gross <mdgrosse@sbox.tugraz.at>
-# Version: 0.07
+#
 # Copyright 2001 Michael Gross <mdgrosse@sbox.tugraz.at>
 # Copyright 2007 Markus Baertschi <markus@markus.org>
 #
 # 27.11.2001 - Bugfix, now also works on Windows (binmode) 
 # 03.09.2007  0.07  Markus Baertschi
 #                   - Added error checking on file open
+# 31.05.2008  1.00  Markus Baertschi <markus@markus.org>
+# 		    - Set version to 1.00 to go with PDF::Create
 
 package JPEGImage;
 use strict;
@@ -18,7 +20,7 @@ use FileHandle;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 0.07;
+$VERSION = 1.00;
 $DEBUG   = 0;
 
 sub new {
