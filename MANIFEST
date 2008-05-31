@@ -10,6 +10,7 @@ lib/PDF/Create/Page.pm
 lib/PDF/Image/GIFImage.pm
 lib/PDF/Image/JPEGImage.pm
 sample.pl
+sample-cgi.pl
 pdf-logo.gif
 pdf-logo.jpg
 t/1-simple.t

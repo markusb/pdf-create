@@ -19,6 +19,7 @@
 #                   - Add more debug statements
 #                   - Fixed 'Rotate'
 #                   - Added 'number' to encode (required for 'Rotate')
+#                   - More Comments and POD Cleanup
 
 package PDF::Create;
 
@@ -95,6 +96,10 @@ sub new {
   return $self;
 }
 
+#
+# Close does the work of creating the PDF data from the
+# objects collected before.
+#
 sub close {
   my $self = shift;
   my %params = @_;
@@ -112,6 +117,10 @@ sub close {
   $self->{'data'};
 }
 
+#
+# Helper fonction for debugging
+# Prints the passed message if debugging is on
+#
 sub debug {
   return unless $DEBUG;
   my $self = shift;
@@ -121,6 +130,9 @@ sub debug {
   warn "PDF DEBUG: $s\n";
 }
 
+#
+# Set/Return the PDF version
+#
 sub version {
   my $self = shift;
   my $v = shift;
@@ -990,7 +1002,7 @@ tied to the size of the pages but only to their number.
 
 =over 5
 
-=head3 new
+=item new
 
 To create a new PDF, send a new() message to the PDF::Create class.
 For example:
@@ -1047,24 +1059,22 @@ Example:
 
 The created object is returned.
 
-=head3 close
+=item close
 
-Add the missing sections needed to obtain a complete and valid PDF
-document then close the file if needed.
-Most of the real work building the PDF is performed in the
-close method.
+Most of the real work building the PDF is performed in the close method.
+It can there fore not be omitted, like a file close.
 
-=head3 get_data
+=item get_data
 
 If you didn't ask the $pdf object to write its output to a file, you
 can pick up the pdf code by calling this method. It returns a big string.
 You need to call C<close> first, mind.
 
-=head3 add_comment [string]
+=item add_comment [string]
 
 Add a comment to the document.
 
-=head3 new_outline [parameters]
+=item new_outline [parameters]
 
 Add an outline to the document using the given parameters.
 Return the newly created outline.
@@ -1090,7 +1100,7 @@ Example:
   $pdf->new_outline('Title' => 'Item 2');
 
 
-=head3 new_page
+=item new_page
 
 Add a page to the document using the given parameters.
 Return the newly created page.
@@ -1137,14 +1147,14 @@ clockwise when it is displayed or printed. This value must be zero
 (the default) or a multiple of 90. The entire page, including contents
 is rotated.
 
-=head3 get_page_size
+=item get_page_size
 
 Returns the size of standard paper sizes to use for MediaBox-parameter
 of C<new_page>. C<get_page_size> has one required parameter to 
 specify the paper name. Possible values are a0-a6, letter, broadsheet,
 ledger, tabloid, legal, executive and 36x36. Default is a4.
 
-=head3 font
+=item font
 
 Prepare a font using the given arguments. This font will be added
 to the document only if it is used at least once before the close method
@@ -1173,7 +1183,7 @@ The Symbol or ZapfDingbats fonts are not supported in this version.
 
 The default font is Helvetica.
 
-=head3 image filename
+=item image filename
 
 Prepare an XObject (image) using the given arguments. This image will be added
 to the document if it is referenced at least once before the close method
@@ -1184,6 +1194,8 @@ and compressed again.
 Parameters: 
 
 - filename: file name of image (required).
+
+=back
 
 =head2 Page methods
 
@@ -1196,13 +1208,15 @@ drawing (using PostScript like paths) and one for writing.
 Some methods are not described here because they must not be called
 directly (e.g. C<new> and C<add>).
 
-=head3 new_page params
+=over 5
+
+=item new_page params
 
 Add a sub-page to the current page.
 
 See C<PDF::Create::new_page>
 
-=head3 string font size x y text
+=item string font size x y text
 
 Add text to the current page using the font object at the given size and
 position. The point (x, y) is the bottom left corner of the rectangle
@@ -1215,19 +1229,19 @@ Example :
  		        'BaseFont' => 'Helvetica');
     $page->string($f1, 20, 306, 396, "some text");
 
-=head3 stringl font size x y text
+=item stringl font size x y text
 
 Same as C<string>.
 
-=head3 stringr font size x y text
+=item stringr font size x y text
 
 Same as C<string> but right aligned.
 
-=head3 stringc font size x y text
+=item stringc font size x y text
 
 Same as C<string> but centered.
 
-=head3 printnl text font size x y
+=item printnl text font size x y
 
 Similar to C<string> but parses the string for newline and prints each part
 on a separate line. Lines spacing is the same as the font-size. Returns the
@@ -1238,55 +1252,59 @@ parameters, font is the absolute minimum, a warning will be given for the
 missing y position and 800 will be assumed. All subsequent invocations can
 omit all but the string parameters.
 
-=head3 string_width font text
+=item string_width font text
 
 Return the size of the text using the given font in default user space units.
 This does not contain the size of the font yet.
 
-=head3 line x1 y1 x2 y2
+=item line x1 y1 x2 y2
 
 Draw a line between (x1, y1) and (x2, y2).
 
-=head3 set_width w
+=item set_width w
 
 Set the width of subsequent lines to w points.
 
-=head3 setrgbcolor r g b
+=item setrgbcolor r g b
 
 Set the color of the subsequent drawing operations. R,G and B is a value
 between 0.0 and 1.0.
 
+=back
+
 =head2 Low level drawing methods
 
-=head3 moveto x y
+=over 5
+
+=item moveto x y
 
 Moves the current point to (x, y), omitting any connecting line segment.
 
-=head3 lineto x y
+=item lineto x y
 
 Appends a straight line segment from the current point to (x, y).
 The current point is (x, y).
 
-=head3 curveto x1 y1 x2 y2 x3 y3
+=item curveto x1 y1 x2 y2 x3 y3
 
 Appends a Bezier curve to the path. The curve extends from the current
 point to (x3 ,y3) using (x1 ,y1) and (x2 ,y2) as the Bezier control
 points. The new current point is (x3 ,y3).
 
-=head3 rectangle x y w h
+=item rectangle x y w h
 
 Adds a rectangle to the current path.
 
-=head3 closepath
+=item closepath
 
 Closes the current subpath by appending a straight line segment
 from the current point to the starting point of the subpath.
 
-=head3 newpath
+=item newpath
 
 Ends the path without filling or stroking it.
 
-=head3 stroke
+=item stroke
 
 Strokes the path.
 
@@ -1298,19 +1316,19 @@ $page->moveto 100 100;
 $page->lineto 200 100;
 $page->stroke;
 
-=head3 closestroke
+=item closestroke
 
 Closes and strokes the path.
 
-=head3 fill
+=item fill
 
 Fills the path using the non-zero winding number rule.
 
-=head3 fill2
+=item fill2
 
 Fills the path using the even-odd rule
 
-=head3 image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew
+=item image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew
 
 Inserts an image.
 
@@ -1332,7 +1350,7 @@ Parameters can be:
 
 =head1 SEE ALSO
 
-L<PDF::Create::Page(3)>, L<perl(1)>
+L<PDF::Create::Page>, L<perl>, L<http://www.adobe.com/devnet/pdf/pdf_reference.html>
 
 =head1 AUTHORS
 
@@ -1340,7 +1358,7 @@ Fabien Tassin (fta@sofaraway.org)
 
 GIF and JPEG-support: Michael Gross (mdgrosse@sbox.tugraz.at)
 
-Maintened since 2007: Markus Baertschi (markus@markus.org)
+Maintenance since 2007: Markus Baertschi (markus@markus.org)
 
 =head1 COPYRIGHT
 
@@ -1351,6 +1369,6 @@ modify this module as you wish, but if you redistribute a
 modified version, please attach a note listing the modifications
 you have made.
 
-Copyright 2007, Markus Baertschi
+Copyright 2007-, Markus Baertschi
 
 =cut
