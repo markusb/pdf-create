@@ -20,6 +20,9 @@
 #                   - Fixed 'Rotate'
 #                   - Added 'number' to encode (required for 'Rotate')
 #                   - More Comments and POD Cleanup
+# 31.05.2008  0.11  Markus Baertschi <markus@markus.org>
+# 		    - Added sample-cgi.pl
+# 		    - Added cgi example to POD
 
 package PDF::Create;
 
@@ -995,57 +998,13 @@ PDF stands for Portable Document Format.
 Documents can have several pages, a table of content, an information
 section and many other PDF elements.
 
-Documents are built on the fly so the memory footprint is not
-tied to the size of the pages but only to their number.
-
 =head1 Methods
 
 =over 5
 
-=item new
+=item * new
 
-To create a new PDF, send a new() message to the PDF::Create class.
-For example:
-
-	my $pdf = new PDF::Create;
-
-This will create an empty PDF structure. A lot of attributes can be
-used:
-
-  - filename: destination file that will contain the resulting
-    PDF or an already opened filehandle or '-' for stdout.
-
-  - Version: can be 1.0 to 1.3 (default: 1.2)
-
-  - PageMode: how the document should appear when opened.
-    Allowed values are:
-
-     - UseNone: Open document with neither outline nor thumbnails
-       visible. This is the default value.
-
-     - UseOutlines: Open document with outline visible.
-
-     - UseThumbs: Open document with thumbnails visible.
-
-     - FullScreen: Open document in full-screen mode. In
-       full-screen mode, there is no menu bar, window controls,
-       nor any other window present.
-
-  - Author: the name of the person who created this document
-
-  - Creator: if the document was converted into a PDF document
-    from another form, this is the name of the application that
-    created the original document.
-
-  - Title: the title of the document
-
-  - Subject: the subject of the document
-
-  - Keywords: keywords associated with the document
-
-  - CreationDate: the date the document was created. This is passed
-    as an anonymous array in the same format as localtime returns.
-    (ie. a struct tm).
+Create a new pdf structure for your pdf.
 
 Example:
 
@@ -1057,24 +1016,84 @@ Example:
 			    'CreationDate' => [ localtime ],
                            );
 
+=over 10
+
+=item filename:
+
+destination file that will contain the resulting
+PDF or an already opened filehandle or '-' for stdout.
+
+=item Version: 
+
+can be 1.0 to 1.3 (default: 1.2)
+
+=item PageMode: 
+
+how the document should appear when opened. 
+
+Allowed values are:
+
+- UseNone: Open document with neither outline nor thumbnails visible. This is the default value.
+
+- UseOutlines: Open document with outline visible.
+
+- UseThumbs: Open document with thumbnails visible.
+
+- FullScreen: Open document in full-screen mode. In full-screen mode, 
+there is no menu bar, window controls, nor any other window present.
+
+=item Author: 
+
+the name of the person who created this document
+
+=item Creator: 
+
+If the document was converted into a PDF document
+  from another form, this is the name of the application that
+  created the original document.
+
+- Title: the title of the document
+
+- Subject: the subject of the document
+
+- Keywords: keywords associated with the document
+
+- CreationDate: the date the document was created. This is passed
+  as an anonymous array in the same format as localtime returns.
+  (ie. a struct tm).
+
+=back
+
+If you are writing a CGI and send your PDF on the fly to a browser you
+can follow this CGI Example:
+
+  use CGI; use PDF::Create;
+  print CGI::header( -type => 'application/x-pdf', -attachment => 'sample.pdf' );
+  my $pdf = new PDF::Create('filename'     => '-', # Stdout
+                            'Author'       => 'John Doe',
+                            'Title'        => 'My title',
+			    'CreationDate' => [ localtime ],
+                           );
+
+
 The created object is returned.
 
-=item close
+=item * close
 
 Most of the real work building the PDF is performed in the close method.
 It can there fore not be omitted, like a file close.
 
-=item get_data
+=item * get_data
 
 If you didn't ask the $pdf object to write its output to a file, you
 can pick up the pdf code by calling this method. It returns a big string.
 You need to call C<close> first, mind.
 
-=item add_comment [string]
+=item * add_comment [string]
 
 Add a comment to the document.
 
-=item new_outline [parameters]
+=item * new_outline [parameters]
 
 Add an outline to the document using the given parameters.
 Return the newly created outline.
@@ -1100,7 +1119,7 @@ Example:
   $pdf->new_outline('Title' => 'Item 2');
 
 
-=item new_page
+=item * new_page
 
 Add a page to the document using the given parameters.
 Return the newly created page.
@@ -1147,14 +1166,14 @@ clockwise when it is displayed or printed. This value must be zero
 (the default) or a multiple of 90. The entire page, including contents
 is rotated.
 
-=item get_page_size
+=item * get_page_size
 
 Returns the size of standard paper sizes to use for MediaBox-parameter
 of C<new_page>. C<get_page_size> has one required parameter to 
 specify the paper name. Possible values are a0-a6, letter, broadsheet,
 ledger, tabloid, legal, executive and 36x36. Default is a4.
 
-=item font
+=item * font
 
 Prepare a font using the given arguments. This font will be added
 to the document only if it is used at least once before the close method
@@ -1183,7 +1202,7 @@ The Symbol or ZapfDingbats fonts are not supported in this version.
 
 The default font is Helvetica.
 
-=item image filename
+=item * image filename
 
 Prepare an XObject (image) using the given arguments. This image will be added
 to the document if it is referenced at least once before the close method
@@ -1210,13 +1229,13 @@ directly (e.g. C<new> and C<add>).
 
 =over 5
 
-=item new_page params
+=item * new_page params
 
 Add a sub-page to the current page.
 
 See C<PDF::Create::new_page>
 
-=item string font size x y text
+=item * string font size x y text
 
 Add text to the current page using the font object at the given size and
 position. The point (x, y) is the bottom left corner of the rectangle
@@ -1229,19 +1248,19 @@ Example :
  		        'BaseFont' => 'Helvetica');
     $page->string($f1, 20, 306, 396, "some text");
 
-=item stringl font size x y text
+=item * stringl font size x y text
 
 Same as C<string>.
 
-=item stringr font size x y text
+=item * stringr font size x y text
 
 Same as C<string> but right aligned.
 
-=item stringc font size x y text
+=item * stringc font size x y text
 
 Same as C<string> but centered.
 
-=item printnl text font size x y
+=item * printnl text font size x y
 
 Similar to C<string> but parses the string for newline and prints each part
 on a separate line. Lines spacing is the same as the font-size. Returns the
@@ -1252,20 +1271,20 @@ parameters, font is the absolute minimum, a warning will be given for the
 missing y position and 800 will be assumed. All subsequent invocations can
 omit all but the string parameters.
 
-=item string_width font text
+=item * string_width font text
 
 Return the size of the text using the given font in default user space units.
 This does not contain the size of the font yet.
 
-=item line x1 y1 x2 y2
+=item * line x1 y1 x2 y2
 
 Draw a line between (x1, y1) and (x2, y2).
 
-=item set_width w
+=item * set_width w
 
 Set the width of subsequent lines to w points.
 
-=item setrgbcolor r g b
+=item * setrgbcolor r g b
 
 Set the color of the subsequent drawing operations. R,G and B is a value
 between 0.0 and 1.0.
@@ -1276,59 +1295,59 @@ between 0.0 and 1.0.
 
 =over 5
 
-=item moveto x y
+=item * moveto x y
 
 Moves the current point to (x, y), omitting any connecting line segment.
 
-=item lineto x y
+=item * lineto x y
 
 Appends a straight line segment from the current point to (x, y).
 The current point is (x, y).
 
-=item curveto x1 y1 x2 y2 x3 y3
+=item * curveto x1 y1 x2 y2 x3 y3
 
 Appends a Bezier curve to the path. The curve extends from the current
 point to (x3 ,y3) using (x1 ,y1) and (x2 ,y2) as the Bezier control
 points. The new current point is (x3 ,y3).
 
-=item rectangle x y w h
+=item * rectangle x y w h
 
 Adds a rectangle to the current path.
 
-=item closepath
+=item * closepath
 
 Closes the current subpath by appending a straight line segment
 from the current point to the starting point of the subpath.
 
-=item newpath
+=item * newpath
 
 Ends the path without filling or stroking it.
 
-=item stroke
+=item * stroke
 
 Strokes the path.
 
 A typical usage is 
 
-$page->newpath;
-$page->setrgbcolorstroke 0.1 0.3 0.8;
-$page->moveto 100 100;
-$page->lineto 200 100;
-$page->stroke;
+	$page->newpath;
+	$page->setrgbcolorstroke 0.1 0.3 0.8;
+	$page->moveto 100 100;
+	$page->lineto 200 100;
+	$page->stroke;
 
-=item closestroke
+=item * closestroke
 
 Closes and strokes the path.
 
-=item fill
+=item * fill
 
 Fills the path using the non-zero winding number rule.
 
-=item fill2
+=item * fill2
 
 Fills the path using the even-odd rule
 
-=item image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew
+=item * image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew
 
 Inserts an image.
 
