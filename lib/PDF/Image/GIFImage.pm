@@ -1,9 +1,9 @@
 # -*- mode: Perl -*-
 
 # PDF::Image::GIFImage - GIF image support
-# Author: Michael Gross <mdgrosse@sbox.tugraz.at>
+# Author: Michael Gross <info@mdgrosse.net>
 # Version: 0.07
-# Copyright 2001 Michael Gross <mdgrosse@sbox.tugraz.at>
+# Copyright 2001 Michael Gross <info@mdgrosse.net>
 # Copyright 2007 Markus Baertschi <markus@markus.org>
 #
 # 10.9.2001   -     Bugfix for Perl 5.6

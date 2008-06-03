@@ -1,9 +1,9 @@
 # -*- mode: Perl -*-
 
 # PDF::Image::JPEGImage - JPEG image support
-# Author: Michael Gross <mdgrosse@sbox.tugraz.at>
+# Author: Michael Gross <info@mdgrosse.net>
 #
-# Copyright 2001 Michael Gross <mdgrosse@sbox.tugraz.at>
+# Copyright 2001 Michael Gross <info@mdgrosse.net>
 # Copyright 2007 Markus Baertschi <markus@markus.org>
 #
 # 27.11.2001 - Bugfix, now also works on Windows (binmode) 

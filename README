@@ -113,4 +113,7 @@
     The last version of PDF::Create from Fabien is 0.06. All never versions
     have been modified by me.
 
+    I maintain PDF::Create in git. You can access the repository directly
+    at http://github.com/markusb/pdf-create.
+
 
