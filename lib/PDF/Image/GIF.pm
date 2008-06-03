@@ -1,6 +1,6 @@
 # -*- mode: Perl -*-
 
-# PDF::Image::GIFImage - GIF image support
+# PDF::Image::GIF - GIF image support
 # Author: Michael Gross <info@mdgrosse.net>
 # Version: 0.07
 # Copyright 2001 Michael Gross <info@mdgrosse.net>
@@ -13,7 +13,7 @@
 # 31.05.2008  1.00  Markus Baertschi
 #                   - Chnaged version to 1.00 for correlation with PDF::Create
 
-package GIFImage;
+package PDF::Image::GIF;
 use strict;
 use vars qw(@ISA @EXPORT $VERSION $DEBUG);
 use Exporter;
@@ -363,19 +363,19 @@ sub Open {
     
     $self->{filename} = $filename;
     my $fh = new FileHandle "$filename";
-    if (!defined $fh) { $self->{error} = "GIFImage.pm: $filename: $!"; return 0 }
+    if (!defined $fh) { $self->{error} = "PDF::Image::GIF.pm: $filename: $!"; return 0 }
     binmode $fh;
     read $fh, $s, 3;
     if ($s ne $PDF_STRING_GIF) {
         close $fh;
-        $self->{error} = "GIFImage.pm: Not a gif file.";
+        $self->{error} = "PDF::Image::GIF.pm: Not a gif file.";
         return 0;
     }
     
     read $fh, $s, 3;
     if ($s ne $PDF_STRING_87a && $s ne $PDF_STRING_89a) {
         close $fh;
-        $self->{error} = "GIFImage.pm: GIF version $s not supported.";
+        $self->{error} = "PDF::Image::GIF.pm: GIF version $s not supported.";
         return 0;
     }
         
@@ -387,7 +387,7 @@ sub Open {
     if ($flags & $LOCALCOLORMAP) {
         if (!$self->ReadColorMap($fh)) {
             close $fh;
-            $self->{error} = "GIFImage.pm: Cant read color map.";
+            $self->{error} = "PDF::Image::GIF.pm: Cant read color map.";
             return 0;
         }
     }
@@ -404,7 +404,7 @@ sub Open {
         read $fh, $c, 1;
         if ($c eq ";") {  #GIF file terminator
             close $fh;
-            $self->{error} = "GIFImage.pm: Cant find image in gif file.";
+            $self->{error} = "PDF::Image::GIF.pm: Cant find image in gif file.";
             return 0;
         }   
         
@@ -431,7 +431,7 @@ sub Open {
         if ($flags & $LOCALCOLORMAP) {            
             if (!$self->ReadColorMap($fh)) {
                 close $fh;
-                $self->{error} = "GIFImage.pm: Cant read color map.";
+                $self->{error} = "PDF::Image::GIF.pm: Cant read color map.";
                 return 0;
             }
         }
@@ -440,7 +440,7 @@ sub Open {
         $self->{bpc} = unpack("C", $s);
         if ($self->{bpc} != 8) {
             close $fh;
-            $self->{error} = "GIFImage.pm: LZW minimum code size other than 8 not supported.";
+            $self->{error} = "PDF::Image::GIF.pm: LZW minimum code size other than 8 not supported.";
             return 0;
         }
             
@@ -480,7 +480,7 @@ sub ReadData {
     my $result = "";
         
     my $fh = new FileHandle $self->{filename};
-    if (!defined $fh) { $self->{error} = "GIFImage.pm: $self->{filename}: $!"; return 0 }
+    if (!defined $fh) { $self->{error} = "PDF::Image::GIF.pm: $self->{filename}: $!"; return 0 }
     binmode $fh;
     seek($fh, $self->{private}->{datapos}, 0);
     my $pos = 0;
@@ -522,7 +522,7 @@ sub ReadData {
             $i_buff >>= $c_size;
 
             if ($flag13 && $code!=256 && $code!=257) {
-                $self->{error} = "GIFImage.pm: LZW code size overflow.";
+                $self->{error} = "PDF::Image::GIF.pm: LZW code size overflow.";
                 return 0;
             }
 

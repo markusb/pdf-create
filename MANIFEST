@@ -9,8 +9,8 @@ TODO
 lib/PDF/Create.pm
 lib/PDF/Create/Outline.pm
 lib/PDF/Create/Page.pm
-lib/PDF/Image/GIFImage.pm
-lib/PDF/Image/JPEGImage.pm
+lib/PDF/Image/GIF.pm
+lib/PDF/Image/JPEG.pm
 sample.pl
 sample-cgi.pl
 pdf-logo.gif
