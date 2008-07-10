@@ -380,7 +380,7 @@ sub Open {
     }
         
     read $fh, $s, 7;
-    ($self->{width}, $self->{height}, $flags, $self->{private}->{background}, $ar) = unpack("SSCCC", $s);
+    ($self->{width}, $self->{height}, $flags, $self->{private}->{background}, $ar) = unpack("vvCCC", $s);
     
     $self->{colormapsize} = 2 << ($flags & 0x07);
     $self->{colorspacesize} = 3 * $self->{colormapsize};
@@ -422,7 +422,7 @@ sub Open {
 
         read $fh, $s, 9;
         my $x;
-        ($x, $c, $self->{width}, $self->{height}, $flags) = unpack("SSSSC", $s);
+        ($x, $c, $self->{width}, $self->{height}, $flags) = unpack("vvvvC", $s);
         
         if ($flags && $INTERLACE) {
             $self->{private}->{interlaced} = 1;
