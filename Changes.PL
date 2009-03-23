@@ -19,9 +19,9 @@ while(<IN>){
     my $vers = `git name-rev --tags $sha 2>/dev/null`;
        $vers =~ s/^.*\///;
        $vers =~ s/~.*$//;
-    print "commit $sha...   PDF::Create $vers";
+    print OUT "commit $sha...   PDF::Create $vers";
   } else {
-    print;
+    print OUT;
   }
 }
 

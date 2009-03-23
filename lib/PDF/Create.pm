@@ -25,7 +25,7 @@
 
 package PDF::Create;
 
-our $VERSION = "1.01";
+our $VERSION = "1.03";
 our $DEBUG   = 0;
 
 use strict;
@@ -90,7 +90,7 @@ sub new {
   $self->{'Keywords'} = $params{'Keywords'} if defined $params{'Keywords'};
   if (defined $params{'CreationDate'}) {
     $self->{'CreationDate'} =
-      sprintf "D:4u%0.2u%0.2u%0.2u%0.2u%0.2u",
+      sprintf "D:%4u%0.2u%0.2u%0.2u%0.2u%0.2u",
 	$params{'CreationDate'}->[5] + 1900, $params{'CreationDate'}->[4] + 1,
 	$params{'CreationDate'}->[3], $params{'CreationDate'}->[2],
 	$params{'CreationDate'}->[1], $params{'CreationDate'}->[0];
