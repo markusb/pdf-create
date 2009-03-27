@@ -12,10 +12,18 @@
 use strict;
 
 #
-# Bail out with non-alarming error message if git ot the correct repository
+# Bail out with non-alarming error message if git or the correct repository
 # is missing.
 #
+
 my $user;
+my $git=`which git`;
+chomp $git;
+if (! (-f $git)) {
+  printf "Skipping... (git not found/installed)\n";
+  exit (0);
+}
+
 if (! ($user=`git config --get user.name 2>/dev/null`)) {
   printf "Skipping... (git not found/installed)\n";
   exit (0);
@@ -38,9 +46,9 @@ while(<IN>){
     my $vers = `git name-rev --tags $sha 2>/dev/null`;
        $vers =~ s/^.*\///;
        $vers =~ s/~.*$//;
-    print OUT "commit $sha...   PDF::Create $vers";
+    print "commit $sha...   PDF::Create $vers";
   } else {
-    print OUT;
+    print;
   }
 }
 
