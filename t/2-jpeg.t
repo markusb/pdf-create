@@ -11,7 +11,10 @@ use PDF::Create;
 
 print "1..1\n";
 
-my $pdf = new PDF::Create('filename' => 'jpeg.pdf',
+my $pdfname = $0;
+$pdfname =~ s/\.t/\.pdf/;
+
+my $pdf = new PDF::Create('filename' => "$pdfname",
 		  	  'Version'  => 1.2,
 			  'PageMode' => 'UseOutlines',
 			  'Author'   => 'Markus Baertschi',

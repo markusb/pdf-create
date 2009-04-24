@@ -12,8 +12,7 @@ use PDF::Create;
 print "1..1\n";
 
 my $pdfname = $0;
-$pdfname =~ s/\.t//;
-$pdfname .= ".pdf";
+$pdfname =~ s/\.t/.pdf/;
 
 my $pdf = new PDF::Create('filename' => "$pdfname",
 		  	  'Version'  => 1.2,
