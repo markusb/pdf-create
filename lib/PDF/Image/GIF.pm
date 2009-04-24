@@ -440,7 +440,7 @@ sub Open {
         $self->{bpc} = unpack("C", $s);
         if ($self->{bpc} != 8) {
             close $fh;
-            $self->{error} = "PDF::Image::GIF.pm: LZW minimum code size other than 8 not supported.";
+            $self->{error} = "PDF::Image::GIF.pm: LZW minimum code size is ".$self->{bpc}.", must be 8 to be supported.";
             return 0;
         }
             

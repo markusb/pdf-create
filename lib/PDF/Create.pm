@@ -1208,6 +1208,8 @@ to the document if it is referenced at least once before the close method
 is called. In this version GIF, interlaced GIF and JPEG is supported. 
 Usage of interlaced GIFs are slower because they are decompressed, modified 
 and compressed again.
+The gif support is limited to images with a lwz min code size of 8. Small
+images with few colors can have a smaller min code size. 
 
 Parameters: 
 
