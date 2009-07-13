@@ -73,6 +73,12 @@ $page->curveto($dx+$p-$l/2*0.55,$dy-$l/2, $dx+$p-$l/2,$dy-$l/2*0.55, $dx+$p-$l/2
 $page->stroke;
 
 
+$ay=50; # y amplitude
+$dy=100; # y offset from page origin
+$dx=300; # x offset from page origin
+$p=10; # distance from back to focal point
+my $i=0;
+
 $page->newpath;
 $page->set_width(2);
 $page->setrgbcolorstroke(0.1,0.2,1);
@@ -83,11 +89,6 @@ for (my $y=-$ay; $y<=$ay; $y=$y+2) {
 $page->stroke;
 
 
-my $ay=50; # y amplitude
-my $dy=100; # y offset from page origin
-my $dx=300; # x offset from page origin
-my $p=10; # distance from back to focal point
-my $i=0;
 $page->newpath;
 $page->set_width(1);
 $page->setrgbcolorstroke(0.1,0.2,1);
