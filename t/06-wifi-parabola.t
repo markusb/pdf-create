@@ -1,15 +1,15 @@
 #!/usr/bin/perl -w
 #
-# 01-simple.t
+# draw some graphics
 #
-# simple test page
+# As example we draw a parabola which can be used to focus wifi signals
 #
 
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
 
-print "1..1\n";
+print "1..2\n";
 
 my $pdfname = $0;
 $pdfname =~ s/\.t/\.pdf/;
@@ -77,11 +77,11 @@ $ay=50; # y amplitude
 $dy=100; # y offset from page origin
 $dx=300; # x offset from page origin
 $p=10; # distance from back to focal point
-my $i=0;
 
 $page->newpath;
 $page->set_width(2);
 $page->setrgbcolorstroke(0.1,0.2,1);
+$page->moveto($ay*$ay/(4*$p),-$ay);
 for (my $y=-$ay; $y<=$ay; $y=$y+2) {
   my $x=$y*$y/(4*$p);
   $page->lineto($x+$dx,$y+$dy);
@@ -89,9 +89,11 @@ for (my $y=-$ay; $y<=$ay; $y=$y+2) {
 $page->stroke;
 
 
+my $i=0;
 $page->newpath;
 $page->set_width(1);
 $page->setrgbcolorstroke(0.1,0.2,1);
+$page->moveto($ay*$ay/(4*$p),-$ay);
 for (my $y=-$ay; $y<=$ay; $y=$y+2) {
   my $x=$y*$y/(4*$p);
   $page->lineto($x+$dx+$i,$y+$dy);
@@ -100,6 +102,7 @@ for (my $y=-$ay; $y<=$ay; $y=$y+2) {
 $page->stroke;
 $page->newpath;
 $i=0;
+$page->moveto($ay*$ay/(4*$p),-$ay);
 for (my $y=-$ay; $y<=$ay; $y=$y+2) {
   my $x=$y*$y/(4*$p);
   $page->lineto($x+$dx+$i,$y+$dy+$ay*2);
@@ -116,5 +119,17 @@ $page->line($dx+$ay*2,$dy,$dx+$ay*2,$dy+$ay*2);
 # Wrap up the PDF and close the file
 $pdf->close;
 
-print "ok 1 # test $0 ended\n";
+# Check the resulting pdf for errors with pdftotext
+if (-x '/usr/bin/pdftotext') {
+  if (my $out=`/usr/bin/pdftotext $pdfname -`) {
+    print "ok 1 # pdf reads fine with pdftotext\n";
+  } else {
+    print "not ok 1 # pdftotext reported errors\n";
+    exit 1;
+  }
+} else {
+  print "ok 1 # Warning: /usr/bin/pdftotext not installed";
+}
+
+print "ok 2 # test $0 ended\n";
 

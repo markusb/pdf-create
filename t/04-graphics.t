@@ -1,15 +1,13 @@
 #!/usr/bin/perl -w
 #
-# 01-simple.t
-#
-# simple test page
+# draw some simple graphics
 #
 
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
 
-print "1..1\n";
+print "1..2\n";
 
 my $pdfname = $0;
 $pdfname =~ s/\.t/\.pdf/;
@@ -64,5 +62,17 @@ $page->stroke;
 # Wrap up the PDF and close the file
 $pdf->close;
 
-print "ok 1 # test $0 ended\n";
+# Check the resulting pdf for errors with pdftotext
+if (-x '/usr/bin/pdftotext') {
+  if (my $out=`/usr/bin/pdftotext $pdfname -`) {
+    print "ok 1 # pdf reads fine with pdftotext\n";
+  } else {
+    print "not ok 1 # pdftotext reported errors\n";
+    exit 1;
+  }
+} else {
+  print "ok 1 # Warning: /usr/bin/pdftotext not installed";
+}
+
+print "ok 2 # test $0 ended\n";
 
