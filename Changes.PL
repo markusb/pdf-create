@@ -13,7 +13,7 @@ use strict;
 
 #
 # Bail out with non-alarming error message if git or the correct repository
-# is missing.
+# is missing or not right.
 #
 
 my $user;
@@ -34,6 +34,9 @@ if ("$user" ne "Markus Baertschi") {
   exit (0);
 }
 
+#
+# Read the git log and add version tab info
+#
 open(OUT,">Changes") or die "Can not open 'Changes' for writing\n";
 open(IN,"git log --abbrev-commit --pretty |") or die "Problem running git log\n";
 while(<IN>){
@@ -41,14 +44,18 @@ while(<IN>){
   if (/^commit /) {
     chop;
     # for each commit get the version from git
-    my $sha=(split(/ /,$_,2))[1];
+    my $sha = (split(/ /,$_,2))[1];
        $sha =~ s/\.\.\.$//;
-    my $vers = `git name-rev --tags $sha 2>/dev/null`;
-       $vers =~ s/^.*\///;
-       $vers =~ s/~.*$//;
-    print "commit $sha...   PDF::Create $vers";
+    my $ver = `git name-rev --tags $sha 2>/dev/null`;
+       chop $ver;
+       $ver =~ s/^.*\///;
+       $ver =~ s/~.*$//;
+       if ($ver =~ /.* undefined/) { $ver = "(no version yet)"; }
+    print OUT "commit $sha...   PDF::Create $ver\n";
   } else {
-    print;
+    print OUT;
   }
 }
+close(OUT);
+close(IN);
 
