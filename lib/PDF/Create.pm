@@ -220,7 +220,7 @@ sub encode {
   } || $type eq 'boolean' && do {
     $val = $val eq 'true' ? $val : $val eq 'false' ? $val :
     $val eq '0' ? 'false' : 'true';
-  } || $type eq 'text' && do {
+  } || $type eq 'verbatim' && do {
     $val = "$val";
   } || $type eq 'string' && do {
     $val = "($val)"; # TODO: split it. Quote parentheses.
@@ -310,10 +310,10 @@ sub string {
   [ 'string', $val ];
 }
 
-sub text {
+sub verbatim {
   my $self = shift;
   my $val = shift;
-  [ 'text', $val ];
+  [ 'verbatim', $val ];
 }
 
 sub array {
@@ -344,6 +344,7 @@ sub indirect_obj {
     $id = ++$self->{'object_number'};
     $gen = $self->{'generation_number'};
   }
+  $self->debug(0,3,"indirect_obj(): ".$self->position);
   push @{$self->{'crossrefsubsection'}{$gen}}, [ $id, $self->position, 1 ];
   [ 'object', [ $id, $gen, @_ ] ];
 }
@@ -892,7 +893,7 @@ sub annotation {
         $self->{'annotations'}{$num} = {
 #                'Name'     => $self->name("Annot$num"),
                 'Subtype'  => $self->name('Link'),
-                'Rect'     => $self->text(sprintf "[%2f %2f %2f %2f]",$params{'x'},$params{'y'},$params{'w'},$params{'h'}),
+                'Rect'     => $self->verbatim(sprintf "[%2f %2f %2f %2f]",$params{'x'},$params{'y'},$params{'w'},$params{'h'}),
 #               'Rect'     => $self->array($x,$y,$dx,$dy),
                 'A'        => $self->dictionary(%$action),
                };
