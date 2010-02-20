@@ -2,31 +2,18 @@
 #
 # PDF::Create - create PDF files
 #
-# Author: Fabien Tassin <fta@sofaraway.org>
+# Original Author: Fabien Tassin <fta@sofaraway.org>
 #
 # Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
-# Copyright 2007      Markus Baertschi <markus@markus.org>
+# Copyright 2007-     Markus Baertschi <markus@markus.org>
 #
-# 03.09.2007  0.08  Markus Baertschi <markus@markus.org>
-#                   - Fixed error checking on file open
-#    04.2008  0.09  Markus Baertschi <markus@markus.org>
-#                   - Clarified documentation
-# 28.05.2008  0.10  Markus Baertschi <markus@markus.org>
-#                   - Additional error checking in encode
-#                   - Made DEBUG accessible from outside
-#                   - Add more debug statements
-#                   - Fixed 'Rotate'
-#                   - Added 'number' to encode (required for 'Rotate')
-#                   - More Comments and POD Cleanup
-#                   - Never released due to cpan versioning limitation
-# 31.05.2008  1.0   Markus Baertschi <markus@markus.org>
-# 		    - Added sample-cgi.pl
-# 		    - Added cgi example to POD
+# Please see the CHANGES and Changes file for the detailed change log
+#
 
 package PDF::Create;
 
-our $VERSION = "1.04";
-our $DEBUG   = 2;
+our $VERSION = "1.05-dev";
+my $DEBUG = 0;
 
 use strict;
 use Carp qw(confess croak cluck carp);
@@ -35,17 +22,16 @@ use PDF::Create::Page;
 use PDF::Create::Outline;
 use PDF::Image::GIF;
 use PDF::Image::JPEG;
-use vars qw($DEBUG);
 
 our (@ISA, @EXPORT, @EXPORT_OK, @EXPORT_FAIL);
 require Exporter;
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-@EXPORT_OK = qw($DEBUG $VERSION);
+@EXPORT_OK = qw($VERSION);
 
-#$Carp::Internal{ ('PDF::Create') }++;
-
-# Create a new object
+#
+# Create a new PDF file
+#
 sub new {
   my $this = shift;
   my %params = @_;
@@ -97,6 +83,13 @@ sub new {
 	$params{'CreationDate'}->[3], $params{'CreationDate'}->[2],
 	$params{'CreationDate'}->[1], $params{'CreationDate'}->[0];
   }
+  if (defined $params{'Debug'}) {
+     print "DEBUG\n";
+     $DEBUG=$params{'Debug'};
+     # Enable stack trace for PDF::Create internal routines
+     $Carp::Internal{ ('PDF::Create') }++;
+  }
+  debug(1,"Debugging level $DEBUG");
   return $self;
 }
 
@@ -108,7 +101,7 @@ sub close {
   my $self = shift;
   my %params = @_;
 
-  $self->debug(0,2,"Closing PDF");
+  debug(2,"Closing PDF");
   $self->page_stream;
   $self->add_outlines if defined $self->{'outlines'};
   $self->add_catalog;
@@ -124,20 +117,16 @@ sub close {
 #
 # Helper function for debugging
 # Prints the passed message if debug level is sufficiently high
-# area is for focus on specific code areas and not used for now
 #
 sub debug {
-  my $self = shift;
-  my $area = shift;
   my $level = shift;
-  
-  return unless ($level<=$DEBUG);
-
   my $msg = shift;
+  
+  return unless ($DEBUG>=$level);
 
   my $s = scalar @_ ? sprintf $msg, @_ : $msg;
 
-  warn "DEBUG ($area:$level): $s\n";
+  warn "DEBUG ($level): $s\n";
 }
 
 #
@@ -184,24 +173,27 @@ sub reserve {
   confess "Error: an object has already been reserved using this name '$name' "
     if defined $self->{'reservations'}{$name};
   $self->{'object_number'}++;
+  debug(2,"reserve(): name=$name type=$type number=$self->{'object_number'} generation=$self->{'generation_number'}");
   $self->{'reservations'}{$name} = [ $self->{'object_number'},
-				     $self->{'generation_number'},
-				     $type
-				   ];
+                                     $self->{'generation_number'},
+                                     $type
+                                   ];
   [ $self->{'object_number'}, $self->{'generation_number'} ];
 }
 
 sub add_version {
   my $self = shift;
-  $self->debug(0,2,"add_version(): $self->{'version'}");
+  
+  debug(2,"add_version(): $self->{'version'}");
   $self->add("%PDF-" . $self->{'version'});
   $self->cr;
 }
 
 sub add_comment {
   my $self = shift;
+  
   my $comment = shift || '';
-  $self->debug(0,2,"add_comment(): $comment");
+  debug(2,"add_comment(): $comment");
   $self->add("%" . $comment);
   $self->cr;
 }
@@ -210,9 +202,12 @@ sub encode {
   my $type = shift;
   my $val = shift;
 
-  if ($DEBUG>=3) {if ($val) {warn("encode: $type $val");}
-                    else {warn("encode: $type (no val)");}}
-  if (! $type) {cluck "PDF::Create::encode: empty argument, called by "; return 1}
+  if ($val) {
+  	  debug(4,"encode(): $type $val");
+  } else {
+  	  debug(4,"(): $type (no val)");
+  }
+  if (! $type) {cluck "PDF::Create::: empty argument, called by "; return 1}
   ($type eq 'null' || $type eq 'number') && do {
     1; # do nothing
   } || $type eq 'cr' && do {
@@ -229,7 +224,7 @@ sub encode {
   } || $type eq 'name' && do {
     $val = "/$val";
   } || $type eq 'array' && do {
-    # array, encode contents individually
+    # array,  contents individually
     my $s = '[';
     for my $v (@$val) {
       $s .= &encode($$v[0], $$v[1]) . " ";
@@ -278,6 +273,7 @@ sub add_object {
   my $val = &encode(@$v);
   $self->add($val);
   $self->cr;
+  debug(3,"add_object(): $v -> $val");
   [ $$v[1][0], $$v[1][1] ];
 }
 
@@ -344,7 +340,7 @@ sub indirect_obj {
     $id = ++$self->{'object_number'};
     $gen = $self->{'generation_number'};
   }
-  $self->debug(0,3,"indirect_obj(): ".$self->position);
+  debug(3,"indirect_obj(): ".$self->position);
   push @{$self->{'crossrefsubsection'}{$gen}}, [ $id, $self->position, 1 ];
   [ 'object', [ $id, $gen, @_ ] ];
 }
@@ -362,7 +358,7 @@ sub stream {
 sub add_info {
   my $self = shift;
 
-  $self->debug(0,2,"add_info():");
+  debug(2,"add_info():");
   my %params = @_;
   $params{'Author'}       = $self->{'Author'}   if defined $self->{'Author'};
   $params{'Creator'}      = $self->{'Creator'}  if defined $self->{'Creator'};
@@ -397,7 +393,7 @@ sub add_info {
 sub add_catalog {
   my $self = shift;
 
-  $self->debug(0,2,"add_catalog");
+  debug(2,"add_catalog");
   my %params = %{$self->{'catalog'}};
   # Type (mandatory)
   $self->{'catalog'} = $self->reserve('Catalog');
@@ -422,7 +418,7 @@ sub add_catalog {
 sub add_outlines {
   my $self = shift;
 
-  $self->debug(0,2,"add_outlines");
+  debug(2,"add_outlines");
   my %params = @_;
   my $outlines = $self->reserve("Outlines");
 
@@ -546,7 +542,7 @@ sub new_page {
 sub add_pages {
   my $self = shift;
 
-  $self->debug(0,2,"add_pages():");
+  debug(2,"add_pages():");
   # $self->page_stream;
   my %params = @_;
   # Type (required)
@@ -565,7 +561,7 @@ sub add_pages {
   $self->cr;
 
   for my $font (sort keys %{$self->{'fonts'}}) {
-    $self->debug(0,2,"add_pages(): font: $font");
+    debug(2,"add_pages(): font: $font");
     $self->{'fontobj'}{$font} = $self->reserve('Font');
     $self->add_object(
       $self->indirect_obj(
@@ -574,7 +570,7 @@ sub add_pages {
   }
 
   for my $xobject (sort keys %{$self->{'xobjects'}}) {
-    $self->debug(0,2,"add_pages(): xobject: $xobject");
+    debug(2,"add_pages(): xobject: $xobject");
     $self->{'xobj'}{$xobject} = $self->reserve('XObject');
     $self->add_object(
       $self->indirect_obj(
@@ -589,18 +585,9 @@ sub add_pages {
     }  
   }
 
-  for my $annotation (sort keys %{$self->{'annotations'}}) {
-    $self->debug(0,2,"add_pages(): annotations: $annotation");
-    $self->{'xobj'}{$annotation} = $self->reserve('Annotation');
-    $self->add_object(
-      $self->indirect_obj(
-        $self->dictionary(%{$self->{'annotations'}{$annotation}}), 'Annotation'));
-    $self->cr;
-  }
-
   for my $page ($self->{'pages'}->list) {
     my $name = $page->{'name'};
-    $self->debug(0,2,"add_pages: page: $name");
+    debug(2,"add_pages: page: $name");
     my $type = 'Page' .
       (defined $page->{'Kids'} && scalar @{$page->{'Kids'}} ? 's' : '');
     # Type (required)
@@ -654,9 +641,9 @@ sub add_pages {
     for my $K ('MediaBox', 'CropBox', 'ArtBox', 'TrimBox', 'BleedBox') {
       my $k = lc $K;
       if (defined $page->{$k}) {
-	my $l = [];
-	map { push @$l, $self->number($_) } @{$page->{$k}};
-	$$content{$K} = $self->array(@$l);
+	    my $l = [];
+	    map { push @$l, $self->number($_) } @{$page->{$k}};
+	    $$content{$K} = $self->array(@$l);
       }
     }
     $$content{'Rotate'} = $self->number($page->{'rotate'}) if defined $page->{'rotate'};
@@ -664,19 +651,18 @@ sub add_pages {
       $$content{'Parent'} = $self->indirect_ref(@{$page->{'Parent'}{'id'}});
       # Content
       if (defined $page->{'contents'}) {
-	my $contents = [];
-	map {
-	  push @$contents, $self->indirect_ref(@$_);
-	} @{$page->{'contents'}};
-	$$content{'Contents'} = $self->array(@$contents);
+	    my $contents = [];
+	    map {
+	      push @$contents, $self->indirect_ref(@$_);
+	    } @{$page->{'contents'}};
+	    $$content{'Contents'} = $self->array(@$contents);
       }
-    }
-    else {
+    } else {
       my $kids = [];
       map { push @$kids, $self->indirect_ref(@$_) } @{$page->kids};
       $$content{'Kids'} = $self->array(@$kids);
       $$content{'Parent'} = $self->indirect_ref(@{$page->{'Parent'}{'id'}})
-	if defined $page->{'Parent'};
+	  if defined $page->{'Parent'};
       $$content{'Count'} = $self->number($page->count);
     }
     $self->add_object(
@@ -689,7 +675,7 @@ sub add_pages {
 sub add_crossrefsection {
   my $self = shift;
 
-  $self->debug(0,2,"add_crossrefsection():");
+  debug(2,"add_crossrefsection():");
   # <cross-reference section> ::=
   #   xref
   #   <cross-reference subsection>+
@@ -707,7 +693,7 @@ sub add_crossrefsubsection {
   my $self = shift;
   my $subsection = shift;
 
-  $self->debug(0,2,"add_crossrefsubsection():");
+  debug(2,"add_crossrefsubsection():");
   # <cross-reference subsection> ::=
   #   <object number of first entry in subsection>
   #   <number of entries in subsection>
@@ -742,7 +728,7 @@ sub add_crossrefsubsection {
 
 sub add_trailer {
   my $self = shift;
-  $self->debug(0,2,"add_trailer():");
+  debug(2,"add_trailer():");
 
   # <trailer> ::= trailer
   #   <<
@@ -793,7 +779,7 @@ sub add_trailer {
 
 sub cr {
   my $self = shift;
-  $self->debug(0,3,"cr():");
+  debug(3,"cr():");
   $self->add(&encode('cr'));
 }
 
@@ -801,7 +787,7 @@ sub page_stream {
   my $self = shift;
   my $page = shift;
 
-  $self->debug(0,2,"page_stream():");
+  debug(2,"page_stream():");
 
   if (defined $self->{'reservations'}{'stream_length'}) {
     ## If it is the same page, use the same stream.
@@ -865,42 +851,6 @@ sub font {
   $num;
 }
 
-#
-# Add an annotation object
-#
-# for the time beeing we only do the 'Link' - 'URI' kind
-#
-sub annotation {
-    my $self = shift;
-    my %params = @_;
-
-    $self->debug(0,2,"annotation(): Subtype=$params{'Subtype'}");
-
-    if ($params{'Subtype'} eq 'Link') {
-        confess "Must specify 'URI' for Link" unless defined $params{'URI'};
-        confess "Must specify 'x' for Link" unless defined $params{'x'};
-        confess "Must specify 'y' for Link" unless defined $params{'y'};
-        confess "Must specify 'w' for Link" unless defined $params{'w'};
-        confess "Must specify 'h' for Link" unless defined $params{'h'};
-
-        my $num = 1 + scalar keys %{$self->{'annotations'}};
-
-        my $action = { 'Type' => $self->name('Action'),
-                       'S'    => $self->name('URI'),
-                       'URI'  => $self->string($params{'URI'}),
-                     };
-
-        $self->{'annotations'}{$num} = {
-#                'Name'     => $self->name("Annot$num"),
-                'Subtype'  => $self->name('Link'),
-                'Rect'     => $self->verbatim(sprintf "[%2f %2f %2f %2f]",$params{'x'},$params{'y'},$params{'w'},$params{'h'}),
-#               'Rect'     => $self->array($x,$y,$dx,$dy),
-                'A'        => $self->dictionary(%$action),
-               };
-    } else {
-        confess "Only Annotations with Subtype 'Link' are supported for now\n";
-    }
-}
 
 sub image {
   my $self = shift;
@@ -1432,7 +1382,7 @@ Parameters can be:
 
 - xscale, yscale: Scaling of image. 1.0 is original size.
 
-- rotate: Rotation of image. 0 is no rotation, 2*pi is 360° rotation.
+- rotate: Rotation of image. 0 is no rotation, 2*pi is 360ï¿½ rotation.
 
 - xskew, yskew: Skew of image.
 
