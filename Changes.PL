@@ -19,13 +19,13 @@ use strict;
 my $user;
 my $git=`which git`;
 chomp $git;
-if (! (-f $git)) {
+if (! -x $git) {
   printf "Skipping... (git not found/installed)\n";
   exit (0);
 }
 
 if (! ($user=`git config --get user.name 2>/dev/null`)) {
-  printf "Skipping... (git not found/installed)\n";
+  printf "Skipping... (git not found/installed or user.name not defined)\n";
   exit (0);
 }
 chop $user;
@@ -37,6 +37,7 @@ if ("$user" ne "Markus Baertschi") {
 #
 # Read the git log and add version tab info
 #
+print "Creating chages file form git commit log\n";
 open(OUT,">Changes") or die "Can not open 'Changes' for writing\n";
 open(IN,"git log --abbrev-commit --pretty |") or die "Problem running git log\n";
 while(<IN>){

@@ -1,4 +1,3 @@
-# -*- mode: Perl -*-
 #
 # PDF::Create - create PDF files
 #
@@ -6,13 +5,14 @@
 #
 # Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
 # Copyright 2007-     Markus Baertschi <markus@markus.org>
+# Copyright 2010      Gary Lieberman
 #
 # Please see the CHANGES and Changes file for the detailed change log
 #
 
 package PDF::Create;
 
-our $VERSION = "1.05-dev";
+our $VERSION = "1.05-rc1";
 my $DEBUG = 0;
 
 use strict;
@@ -178,12 +178,22 @@ sub reserve {
                                      $self->{'generation_number'},
                                      $type
                                    ];
+  #
+  # Annotations added here by Gary Lieberman
+  #
+  # Store the Object ID and the Generation Number for later use when we write out the /Page object
+  #
+  if ($type eq 'Annotation'){
+    $self->{'Annots'}{$self->{'object_number'}} = $self->{'generation_number'};
+  }
+  #
+  # Annotations code ends here
+  #
   [ $self->{'object_number'}, $self->{'generation_number'} ];
 }
 
 sub add_version {
   my $self = shift;
-  
   debug(2,"add_version(): $self->{'version'}");
   $self->add("%PDF-" . $self->{'version'});
   $self->cr;
@@ -191,7 +201,6 @@ sub add_version {
 
 sub add_comment {
   my $self = shift;
-  
   my $comment = shift || '';
   debug(2,"add_comment(): $comment");
   $self->add("%" . $comment);
@@ -205,9 +214,9 @@ sub encode {
   if ($val) {
   	  debug(4,"encode(): $type $val");
   } else {
-  	  debug(4,"(): $type (no val)");
+  	  debug(4,"encode(): $type (no val)");
   }
-  if (! $type) {cluck "PDF::Create::: empty argument, called by "; return 1}
+  if (! $type) {cluck "PDF::Create::encode: empty argument, called by "; return 1}
   ($type eq 'null' || $type eq 'number') && do {
     1; # do nothing
   } || $type eq 'cr' && do {
@@ -224,7 +233,7 @@ sub encode {
   } || $type eq 'name' && do {
     $val = "/$val";
   } || $type eq 'array' && do {
-    # array,  contents individually
+    # array, encode contents individually
     my $s = '[';
     for my $v (@$val) {
       $s .= &encode($$v[0], $$v[1]) . " ";
@@ -585,6 +594,14 @@ sub add_pages {
     }  
   }
 
+  for my $annotation (sort keys %{$self->{'annotations'}}) {
+    $self->{'annot'}{$annotation}{'object_info'} = $self->reserve('Annotation');
+    $self->add_object(
+      $self->indirect_obj(
+        $self->dictionary(%{$self->{'annotations'}{$annotation}}), 'Annotation'));
+    $self->cr;
+  }
+
   for my $page ($self->{'pages'}->list) {
     my $name = $page->{'name'};
     debug(2,"add_pages: page: $name");
@@ -657,6 +674,28 @@ sub add_pages {
 	    } @{$page->{'contents'}};
 	    $$content{'Contents'} = $self->array(@$contents);
       }
+      #
+      # Annotations added here by Gary Lieberman
+      #
+      # Tell the /Page object that annotations need to be drawn.
+      #
+      if (defined $self->{'annot'}) {
+	    my $Annots = '[ ';
+        my $is_annots = 0;
+	    foreach my $annot_number (keys %{$self->{'annot'}}){
+          next if($self->{'annot'}{$annot_number}{'page_name'} ne $name);
+          $is_annots = 1;
+	      debug(2,sprintf "annotation number:  $annot_number, page name: $self->{'annot'}{$annot_number}{'page_name'}");
+          my $object_number = $self->{'annot'}{$annot_number}{'object_info'}[0];
+          my $generation_number = $self->{'annot'}{$annot_number}{'object_info'}[1];
+	      debug(2,sprintf "object_number: $object_number, generation_number: $generation_number");
+	      $Annots .= sprintf("%s %s R ",$object_number, $generation_number);
+	    }
+	    $$content{'Annots'} = $self->verbatim($Annots.']') if($is_annots);
+      }
+      #
+      # Annotations code ends here
+      #
     } else {
       my $kids = [];
       map { push @$kids, $self->indirect_ref(@$_) } @{$page->kids};
@@ -851,6 +890,47 @@ sub font {
   $num;
 }
 
+#
+# Add an annotation object
+#
+# for the time beeing we only do the 'Link' - 'URI' kind
+#
+sub annotation {
+    my $self = shift;
+    my %params = @_;
+
+    debug(2,"annotation(): Subtype=$params{'Subtype'}");
+
+    if ($params{'Subtype'} eq 'Link') {
+        confess "Must specify 'URI' for Link" unless defined $params{'URI'};
+        confess "Must specify 'x' for Link" unless defined $params{'x'};
+        confess "Must specify 'y' for Link" unless defined $params{'y'};
+        confess "Must specify 'w' for Link" unless defined $params{'w'};
+        confess "Must specify 'h' for Link" unless defined $params{'h'};
+
+        my $num = 1 + scalar keys %{$self->{'annotations'}};
+
+        my $action = { 'Type' => $self->name('Action'),
+                       'S'    => $self->name('URI'),
+                       'URI'  => $self->string($params{'URI'}),
+                     };
+
+        $self->{'annotations'}{$num} = {
+                'Subtype'  => $self->name('Link'),
+                'Rect'     => $self->verbatim(sprintf "[%f %f %f %f]",$params{'x'},$params{'y'},$params{'w'},$params{'h'}),
+                'A'        => $self->dictionary(%$action),
+               };
+
+	if (defined $params{'Border'}) {
+	    $self->{'annotations'}{$num}{'Border'} = $self->verbatim(sprintf "[%f %f %f]",$params{'Border'}[0],
+		$params{'Border'}[1],$params{'Border'}[2]);
+	}
+	$self->{'annot'}{$num}{'page_name'} = "Page ".$self->{'page_count'};
+	debug(2,"annotation(): annotation number: $num, page name: $self->{'annot'}{$num}{'page_name'}");
+    } else {
+        confess "Only Annotations with Subtype 'Link' are supported for now\n";
+    }
+}
 
 sub image {
   my $self = shift;
@@ -1221,6 +1301,28 @@ The Symbol or ZapfDingbats fonts are not supported in this version.
 
 The default font is Helvetica.
 
+=item * URI links
+
+URI links within a PDF document are referred to as annotations.  You create an
+anntation using the annotation function as follows:
+
+Example :
+
+     $pdf->annotation(
+             Subtype => 'Link',
+             URI     => 'http://www.cpan.org',
+             x       => 150,
+             y       => 710,
+             w       => 180,
+             h       => 700,
+             P	
+     );
+
+The point (x, y) is the bottom left corner of the rectangle
+containing hotspot rectangle.  The point (w, h) is the top right
+corner of the hotspot rectangle.  The Border describes the thickness of the border
+surrounding the rectangle hotspot. 
+
 =item * image filename
 
 Prepare an XObject (image) using the given arguments. This image will be added
@@ -1268,6 +1370,16 @@ Example :
  	   	        'Encoding' => 'WinAnsiEncoding',
  		        'BaseFont' => 'Helvetica');
     $page->string($f1, 20, 306, 396, "some text");
+
+=item * stringu font size x y text r g b R G B
+
+Same as C<string> but underlined and colored text.
+Can be used in conjunction with the annotation function for printing
+URI links.
+
+- r g b is the color to make the text.
+
+- R G B is the color to return after the text is printed.
 
 =item * stringl font size x y text
 

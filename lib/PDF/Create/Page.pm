@@ -1,14 +1,14 @@
-# -*- mode: Perl -*-
-
+#
 # PDF::Create::Page - PDF pages tree
+#
 # Author: Fabien Tassin <fta@sofaraway.org>
-# Version: 0.06
-# Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
-
-# bugs :
-# - ...
-# 31.05.2008  1.00  Markus Baertschi
-# 		    - Changed version to 1.00 to go with PDF::Create
+#
+# Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org> 
+# Copyright 2007-     Markus Baertschi <markus@markus.org>
+# Copyright 2010      Gary Lieberman
+#
+# Please see the CHANGES and Changes file for the detailed change log
+#
 
 package PDF::Create::Page;
 
@@ -21,7 +21,7 @@ use Data::Dumper;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 1.00;
+$VERSION = 1.05;
 $DEBUG   = 0;
 
 my $font_widths = &init_widths;
@@ -108,7 +108,7 @@ sub lineto {
 
 # x1 y1 x2 y2 x3 y3 c: appends a Bezier curve to the path. The curve extends
 #       from the current point to (x3 ,y3) using (x1 ,y1) and (x2 ,y2)
-#       as the Bézier control points. The new current point is (x3 ,y3).
+#       as the Bezier control points. The new current point is (x3 ,y3).
 sub curveto {
   my $self = shift;
   my ($x1, $y1, $x2, $y2, $x3, $y3) = @_;
@@ -253,6 +253,44 @@ sub string {
   $self->{'pdf'}->uses_font($self, $font);
   $s =~ s|([()])|\\$1|g;
   $self->{'pdf'}->add("BT /F$font $size Tf $x $y Td ($s) Tj ET");
+}
+
+#
+# The stringu function added by Gary Lieberman
+#
+# Writes out an underlined string.
+#
+sub stringu {
+  my $self = shift;
+  my $font = shift;
+  my $size = shift;
+  my $x    = shift;
+  my $y    = shift;
+  my $s    = shift;
+  my $r    = shift;	# The red level to set the string color to
+  my $g    = shift;	# The green level to set the string color to
+  my $b    = shift;	# The blue level to set the string color to
+  my $rr    = shift;	# The red level to return to after the string is drawn
+  my $gg    = shift;	# The green level to return to after the string is drawn
+  my $bb    = shift;	# The blue level to return to after the string is drawn
+
+  if(defined $r && defined $g && defined $b){
+    $self->setrgbcolor($r,$g,$b);
+    $self->setrgbcolorstroke($r,$g,$b);
+  }
+  $self->{'pdf'}->page_stream($self);
+  $self->{'pdf'}->uses_font($self, $font);
+  $s =~ s|([()])|\\$1|g;
+  $self->{'pdf'}->add("BT /F$font $size Tf $x $y Td ($s) Tj ET");
+  my $l = $self->string_width($font,$s);
+  $self->line($x, $y-1, $x+($size * $l), $y-1);
+  if(defined $r && defined $g && defined $b){
+    $rr = 0 if(!defined $rr);
+    $gg = 0 if(!defined $gg);
+    $bb = 0 if(!defined $bb);
+    $self->setrgbcolor($rr,$gg,$bb);
+    $self->setrgbcolorstroke($rr,$gg,$bb);
+  }
 }
 
 sub stringl {
