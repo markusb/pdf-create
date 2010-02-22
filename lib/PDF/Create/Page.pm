@@ -26,6 +26,9 @@ $DEBUG   = 0;
 
 my $font_widths = &init_widths;
 
+my $ptext = ""; # Global variable for text function
+
+
 sub new {
   my $this = shift;
   my $class = ref($this) || $this;
@@ -241,56 +244,48 @@ sub set_width {
   $self->{'pdf'}->add("$w w");
 }
 
-sub string {
-  my $self = shift;
-  my $font = shift;
-  my $size = shift;
-  my $x    = shift;
-  my $y    = shift;
-  my $s    = shift;
 
-  $self->{'pdf'}->page_stream($self);
-  $self->{'pdf'}->uses_font($self, $font);
-  $s =~ s|([()])|\\$1|g;
-  $self->{'pdf'}->add("BT /F$font $size Tf $x $y Td ($s) Tj ET");
+
+sub string {
+    my $self = shift;
+    my $font = shift;
+    my $size = shift;
+    my $x    = shift;
+    my $y    = shift;
+    my $s    = shift;
+    my $align = shift || 'L';
+    
+    if (uc($align) eq "R") {
+        $x -= $size * $self->string_width($font, $s);
+    } elsif (uc($align) eq "C") {
+        $x -= $size * $self->string_width($font, $s) / 2;
+    }
+  
+    $self->{'pdf'}->page_stream($self);
+    $self->{'pdf'}->uses_font($self, $font);
+    $s =~ s|([()])|\\$1|g;
+    $self->{'pdf'}->add("BT /F$font $size Tf $x $y Td ($s) Tj ET");
 }
 
-#
-# The stringu function added by Gary Lieberman
-#
-# Writes out an underlined string.
-#
-sub stringu {
-  my $self = shift;
-  my $font = shift;
-  my $size = shift;
-  my $x    = shift;
-  my $y    = shift;
-  my $s    = shift;
-  my $r    = shift;	# The red level to set the string color to
-  my $g    = shift;	# The green level to set the string color to
-  my $b    = shift;	# The blue level to set the string color to
-  my $rr    = shift;	# The red level to return to after the string is drawn
-  my $gg    = shift;	# The green level to return to after the string is drawn
-  my $bb    = shift;	# The blue level to return to after the string is drawn
+sub string_underline {
+	my $self = shift;
+    my $font = shift;
+    my $size = shift;
+    my $x    = shift;
+    my $y    = shift;
+    my $string = shift;
+    my $align  = shift || 'L';
 
-  if(defined $r && defined $g && defined $b){
-    $self->setrgbcolor($r,$g,$b);
-    $self->setrgbcolorstroke($r,$g,$b);
-  }
-  $self->{'pdf'}->page_stream($self);
-  $self->{'pdf'}->uses_font($self, $font);
-  $s =~ s|([()])|\\$1|g;
-  $self->{'pdf'}->add("BT /F$font $size Tf $x $y Td ($s) Tj ET");
-  my $l = $self->string_width($font,$s);
-  $self->line($x, $y-1, $x+($size * $l), $y-1);
-  if(defined $r && defined $g && defined $b){
-    $rr = 0 if(!defined $rr);
-    $gg = 0 if(!defined $gg);
-    $bb = 0 if(!defined $bb);
-    $self->setrgbcolor($rr,$gg,$bb);
-    $self->setrgbcolorstroke($rr,$gg,$bb);
-  }
+    my $len = $self->string_width($font,$string) * $size;
+    my $len2 = $len / 2;
+    if (uc($align) eq "R") {
+    	$self->line($x-$len, $y-1, $x, $y-1);
+    } elsif (uc($align) eq "C") {
+        $self->line($x-$len2, $y-1, $x+$len2, $y-1);
+    } else {
+        $self->line($x, $y-1, $x+$len, $y-1);
+    }
+    return $len;
 }
 
 sub stringl {
@@ -342,6 +337,8 @@ sub string_width {
   my $font   = shift;
   my $string = shift;
 
+  croak 'No string given' unless defined $string;
+  
   my $fname = $self->{'pdf'}{'fonts'}{$font}{'BaseFont'}[1];
   my $w = 0;
   for my $c (split '', $string) {

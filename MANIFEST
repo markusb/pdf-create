@@ -15,11 +15,17 @@ pdf-logo.svg
 README
 sample-cgi.pl
 sample.pl
+t/01-basic.t
 t/01-general.t
 t/01-simple.t
 t/02-jpeg.t
+t/02-text.t
 t/03-gif.t
+t/03-image.t
+t/04-drawing.t
 t/04-graphics.t
+t/05-outline.t
+t/06-annotation.t
 t/06-wifi-parabola.t
 t/07-fonts.t
 t/08-multipage.csv
@@ -28,5 +34,6 @@ t/09-cgi-script.pl
 t/09-cgi.t
 t/10-rectangle.t
 t/11-link.t
+t/99-wifi-parabola.t
 t/pdf-logo.gif
 t/pdf-logo.jpg

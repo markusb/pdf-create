@@ -12,7 +12,7 @@
 
 package PDF::Create;
 
-our $VERSION = "1.05-rc1";
+our $VERSION = "1.05-rc2";
 my $DEBUG = 0;
 
 use strict;
@@ -914,19 +914,22 @@ sub annotation {
                        'S'    => $self->name('URI'),
                        'URI'  => $self->string($params{'URI'}),
                      };
+        my $x2 = $params{'x'} + $params{'w'};
+        my $y2 = $params{'y'} + $params{'h'};
 
         $self->{'annotations'}{$num} = {
                 'Subtype'  => $self->name('Link'),
-                'Rect'     => $self->verbatim(sprintf "[%f %f %f %f]",$params{'x'},$params{'y'},$params{'w'},$params{'h'}),
+                'Rect'     => $self->verbatim(sprintf "[%f %f %f %f]",$params{'x'},$params{'y'},$x2,$y2),
                 'A'        => $self->dictionary(%$action),
                };
 
-	if (defined $params{'Border'}) {
-	    $self->{'annotations'}{$num}{'Border'} = $self->verbatim(sprintf "[%f %f %f]",$params{'Border'}[0],
-		$params{'Border'}[1],$params{'Border'}[2]);
-	}
-	$self->{'annot'}{$num}{'page_name'} = "Page ".$self->{'page_count'};
-	debug(2,"annotation(): annotation number: $num, page name: $self->{'annot'}{$num}{'page_name'}");
+	 	if (defined $params{'Border'}) {
+		    $self->{'annotations'}{$num}{'Border'} = $self->verbatim(sprintf "[%f %f %f]",$params{'Border'}[0],
+			$params{'Border'}[1],$params{'Border'}[2]);
+		}
+		$self->{'annot'}{$num}{'page_name'} = "Page ".$self->{'page_count'};
+		debug(2,"annotation(): annotation number: $num, page name: $self->{'annot'}{$num}{'page_name'}");
+		1;
     } else {
         confess "Only Annotations with Subtype 'Link' are supported for now\n";
     }
@@ -1311,17 +1314,19 @@ Example :
      $pdf->annotation(
              Subtype => 'Link',
              URI     => 'http://www.cpan.org',
-             x       => 150,
-             y       => 710,
-             w       => 180,
-             h       => 700,
-             P	
+             x       => 450,
+             y       => 200,
+             w       => 120,
+             h       => 15,
+             Border  => [1,1,1]
      );
 
-The point (x, y) is the bottom left corner of the rectangle
-containing hotspot rectangle.  The point (w, h) is the top right
-corner of the hotspot rectangle.  The Border describes the thickness of the border
-surrounding the rectangle hotspot. 
+The point (x, y) is the bottom left corner of the rectangle containing hotspot 
+rectangle, (w, h) are the width and height of the hotspot rectangle.
+The Border describes the thickness of the border surrounding the rectangle hotspot. 
+
+The function C<string_undeline> return the width of the string,
+it can be used directly for the width of the hotspot rectangle.
 
 =item * image filename
 
@@ -1358,11 +1363,13 @@ Add a sub-page to the current page.
 
 See C<PDF::Create::new_page>
 
-=item * string font size x y text
+=item * string font size x y text alignment
 
 Add text to the current page using the font object at the given size and
 position. The point (x, y) is the bottom left corner of the rectangle
 containing the text.
+
+The optional alignment can be 'r' for right-alignment and 'c' for centered.
 
 Example :
 
@@ -1371,15 +1378,20 @@ Example :
  		        'BaseFont' => 'Helvetica');
     $page->string($f1, 20, 306, 396, "some text");
 
-=item * stringu font size x y text r g b R G B
+=item * string_underline font size x y text alignment
 
-Same as C<string> but underlined and colored text.
-Can be used in conjunction with the annotation function for printing
-URI links.
+Draw a line for underlining. The parameters are the same as for the string
+function, but only the line is drawn. To draw an underlined string you
+must call both, string and string_underline. 
 
-- r g b is the color to make the text.
+Example :
 
-- R G B is the color to return after the text is printed.
+    $page->string($f1, 20, 306, 396, "some underlined text");
+    $page->string_underline($f1, 20, 306, 396, "some underlined text");
+
+C<string_underline> returns the length of the string. So its return
+value can be used directly for the bounding box of an annotation.
+
 
 =item * stringl font size x y text
 
@@ -1387,11 +1399,11 @@ Same as C<string>.
 
 =item * stringr font size x y text
 
-Same as C<string> but right aligned.
+Same as C<string> but right aligned (alignment 'r').
 
 =item * stringc font size x y text
 
-Same as C<string> but centered.
+Same as C<string> but centered (alignment 'c').
 
 =item * printnl text font size x y
 
@@ -1403,6 +1415,10 @@ Note the different parameter sequence. The first call should specify all
 parameters, font is the absolute minimum, a warning will be given for the
 missing y position and 800 will be assumed. All subsequent invocations can
 omit all but the string parameters.
+
+Attention: There is no provision for changing pages. If you run out of
+space on the current page this will draw the string(s) outside the page and
+it will be invisble !
 
 =item * string_width font text
 
