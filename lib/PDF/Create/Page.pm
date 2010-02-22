@@ -244,7 +244,50 @@ sub set_width {
   $self->{'pdf'}->add("$w w");
 }
 
+#
+# new text function with functionality aligned with the PDF structure
+#
 
+my $pi = atan2(1,1) * 4;
+my $piover180 = $pi/180;
+    
+sub text {
+    my $self = shift;
+    my %params = @_;
+
+    PDF::Create::debug(2,"text(%params):");
+    
+    if (defined $params{'start'}) { $ptext = "BT "; }
+    if (defined $params{'Ts'}) { $ptext .= " $params{'Ts'} Ts "; } # Text Rise (Super/Subscript) 
+    if (defined $params{'Tr'}) { $ptext .= " $params{'Tr'} Tr "; } # Rendering Mode
+    if (defined $params{'TL'}) { $ptext .= " $params{'TL'} TL "; } # Text Leading 
+    if (defined $params{'Tc'}) { $ptext .= " $params{'Tc'} Tc "; } # Character spacing
+    if (defined $params{'Tw'}) { $ptext .= " $params{'Tw'} Tw "; } # Word Spacing
+    if (defined $params{'Tz'}) { $ptext .= " $params{'Tz'} Tz "; } # Horizontal Scaling
+    if (defined $params{'rot'}) { # Moveto and rotate
+    	my ($r,$x,$y) = split (/\s+/,$params{'rot'},3);
+    	$x = 0 unless ($x>0);
+    	$y = 0 unless ($y>0);
+    	my $cos = cos($r * $piover180);
+    	my $sin = sin($r * $piover180);
+    	$ptext .= sprintf(" %.5f %.5f -%.5f %.5f %s %s Tm ",$cos,$sin,$sin,$cos,$x,$y)
+    }
+    if (defined $params{'Tf'}) { $ptext .= "/F$params{'Tf'} Tf "; } # Font size
+    if (defined $params{'Td'}) { $ptext .= " $params{'Td'} Td "; } # Moveto
+    if (defined $params{'TD'}) { $ptext .= " $params{'TD'} TD "; } # Moveto and set TL
+    if (defined $params{'T*'}) { $ptext .= " T* "; } # New line
+    if (defined $params{'text'}) {
+    	$params{'text'} =~ s|([()])|\\$1|g;
+    	$ptext .= "($params{'text'}) Tj "; 
+    }
+    if (defined $params{'end'}) { 
+    	$ptext .= " ET"; 
+        $self->{'pdf'}->page_stream($self);
+        $self->{'pdf'}->add("$ptext");    
+    }
+    PDF::Create::debug(3,"text(): $ptext");
+    1;
+}
 
 sub string {
     my $self = shift;
