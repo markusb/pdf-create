@@ -46,12 +46,12 @@ sub new
 
 	$self->{'pages'}          = new PDF::Create::Page();
 	$self->{'current_page'}   = $self->{'pages'};
-	$self->{'pages'}->{'pdf'} = $self;                      # circular reference
+	$self->{'pages'}->{'pdf'} = $self;                     # circular reference
 	$self->{'page_count'}     = 0;
 
 	$self->{'outline_count'} = 0;
 
-	$self->{'crossreftblstartaddr'} = 0;                    # cross-reference table start address
+	$self->{'crossreftblstartaddr'} = 0;                   # cross-reference table start address
 	$self->{'generation_number'}    = 0;
 	$self->{'object_number'}        = 0;
 
@@ -77,6 +77,8 @@ sub new
 	$self->{'Title'}    = $params{'Title'}    if defined $params{'Title'};
 	$self->{'Subject'}  = $params{'Subject'}  if defined $params{'Subject'};
 	$self->{'Keywords'} = $params{'Keywords'} if defined $params{'Keywords'};
+
+	# TODO: Default creation date from system date
 	if ( defined $params{'CreationDate'} ) {
 		$self->{'CreationDate'} =
 		  sprintf "D:%4u%0.2u%0.2u%0.2u%0.2u%0.2u",
@@ -235,7 +237,7 @@ sub encode
 	  }
 	  || $type eq 'boolean' && do {
 		$val =
-		    $val eq 'true'  ? $val 
+		    $val eq 'true'  ? $val
 		  : $val eq 'false' ? $val
 		  : $val eq '0'     ? 'false'
 		  :                   'true';
@@ -1079,52 +1081,46 @@ PDF::Create - create PDF files
 
 =head1 SYNOPSIS
 
+Create PDF output from your perl program using a couple of subroutines to
+handle text, fonts, images and drawing primitives. Simple documents are
+easy to create with the supplied routines. For complex stuff some understanding
+of the underlying Postscript/PDF format is necessary.
+
+
   use PDF::Create;
-
+  # initialize PDF
   my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
-			    'Version'      => 1.2,
-			    'PageMode'     => 'UseOutlines',
-			    'Author'       => 'John Doe',
-			    'Title'        => 'My Title',
-			    'CreationDate' => [ localtime ],
-			   );
+			                'Author'       => 'John Doe',
+			                'Title'        => 'Sample PDF',
+			                'CreationDate' => [ localtime ], );
+			                
   # add a A4 sized page
-  my $root = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
+  my $a4 = $pdf->new_page('MediaBox' => $pdf->get_page_size('A4'));
 
-  # Add a page which inherits its attributes from $root
-  my $page = $root->new_page;
+  # Add a page which inherits its attributes from $a4
+  my $page = $a4->new_page;
 
-  # Prepare 2 fonts
-  my $f1 = $pdf->font('Subtype'  => 'Type1',
-   		      'Encoding' => 'WinAnsiEncoding',
- 		      'BaseFont' => 'Helvetica');
-  my $f2 = $pdf->font('Subtype'  => 'Type1',
- 		      'Encoding' => 'WinAnsiEncoding',
- 		      'BaseFont' => 'Helvetica-Bold');
+  # Prepare a font
+  my $f1 = $pdf->font('BaseFont' => 'Helvetica');
 
   # Prepare a Table of Content
-  my $toc = $pdf->new_outline('Title' => 'Document',
-                              'Destination' => $page);
-  $toc->new_outline('Title' => 'Section 1');
-  my $s2 = $toc->new_outline('Title' => 'Section 2',
-                             'Status' => 'closed');
-  $s2->new_outline('Title' => 'Subsection 1');
+  my $toc = $pdf->new_outline('Title' => 'Title Page', 'Destination' => $page);
 
+  # Write some text
   $page->stringc($f2, 40, 306, 426, "PDF::Create");
   $page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
+  $page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
 
   # Add another page
-  my $page2 = $root->new_page;
+  my $page2 = $a4->new_page;
+  
+  # Draw some lines
   $page2->line(0, 0, 612, 792);
   $page2->line(0, 792, 612, 0);
 
-  $toc->new_outline('Title' => 'Section 3');
-  $pdf->new_outline('Title' => 'Summary');
+  $toc->new_outline('Title' => 'Second Page', 'Destination' => $page2);
 
-  # Add something to the first page
-  $page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
-
-  # Add the missing PDF objects and a the footer then close the file
+  # Close the file and write the PDF
   $pdf->close;
 
 =head1 DESCRIPTION
@@ -1152,7 +1148,7 @@ Example:
                             'PageMode'     => 'UseOutlines',
                             'Author'       => 'John Doe',
                             'Title'        => 'My title',
-			    'CreationDate' => [ localtime ],
+			                'CreationDate' => [ localtime ],
                            );
 
 C<new> returns an object handle used to add more stuff to the PDF. 

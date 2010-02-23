@@ -1,5 +1,5 @@
 #
-# PDF::Create::Page - PDF pages tree
+# PDF::Create::Page - PDF pages tree for PDF::Create
 #
 # Author: Fabien Tassin <fta@sofaraway.org>
 #
@@ -213,7 +213,6 @@ sub set_width
 	$self->{'pdf'}->page_stream($self);
 	$self->{'pdf'}->add("$w w");
 }
-
 
 #######################################################################
 # Color functions
@@ -493,6 +492,7 @@ sub image
 	$self->{'pdf'}->page_stream($self);
 	$self->{'pdf'}->uses_xobject( $self, $image );
 	$self->{'pdf'}->add("q\n");
+
 	# TODO: Merge position with rotate
 	$self->{'pdf'}->add("1 0 0 1 $xpos $ypos cm\n") if ( $xpos || $ypos );
 	if ($rotate) {

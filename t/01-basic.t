@@ -1,6 +1,12 @@
 #!/usr/bin/perl -w
 #
-# testing basic stuff
+# PDF::Create - Test Script
+#
+# Copyright 2010-     Markus Baertschi <markus@markus.org>
+#
+# Please see the CHANGES and Changes file for the detailed change log
+#
+# Testing basic stuff
 # - open / close
 # - page root / new page
 # - comment

@@ -1,5 +1,11 @@
 #!/usr/bin/perl -w
 #
+# PDF::Create - Test Script
+#
+# Copyright 2010-     Markus Baertschi <markus@markus.org>
+#
+# Please see the CHANGES and Changes file for the detailed change log
+#
 # Testing annitations
 # - Link
 #
@@ -8,7 +14,6 @@ BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
 use Test::More tests => 13;
-
 # we want the resulting pdf file to have the same name as the test
 my $pdfname = $0;
 $pdfname =~ s/\.t/\.pdf/;
