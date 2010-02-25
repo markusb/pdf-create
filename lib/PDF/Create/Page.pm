@@ -11,7 +11,7 @@
 #
 # Please do not use any of the methods here directly. You will be
 # punished with your application no longer working after an upgrade !
-#  
+#
 
 package PDF::Create::Page;
 
@@ -481,15 +481,15 @@ sub image
 	$yscale *= $img->{height};
 
 	if ( $xalign == 1 ) {
-		$xpos -= $img->{width} / 2;
+		$xpos -= $xscale / 2;
 	} elsif ( $xalign == 2 ) {
-		$xpos -= $img->{width};
+		$xpos -= $xscale;
 	}
 
 	if ( $yalign == 1 ) {
-		$ypos -= $img->{height} / 2;
+		$ypos -= $yscale / 2;
 	} elsif ( $yalign == 2 ) {
-		$ypos -= $img->{height};
+		$ypos -= $yscale;
 	}
 
 	$self->{'pdf'}->page_stream($self);

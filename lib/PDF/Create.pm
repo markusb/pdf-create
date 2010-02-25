@@ -2,6 +2,7 @@
 # PDF::Create - create PDF files
 #
 # Original Author: Fabien Tassin
+
 #
 # Copyright 1999-2001 Fabien Tassin
 # Copyright 2007-     Markus Baertschi <markus@markus.org>
