@@ -14,7 +14,7 @@
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
-use Test::More tests => 13;
+use Test::More tests => 21;
 
 # we want the resulting pdf file to have the same name as the test
 my $pdfname = $0;
@@ -52,9 +52,8 @@ ok( defined $root, "Page root defined" );
 # Write some text to the page
 $page->stringc( $f1, 40, 306, 700, 'PDF::Create' );
 $page->stringc( $f1, 20, 306, 650, "version $PDF::Create::VERSION" );
-$page->stringc( $f1, 20, 306, 600, 'Simple Test Document' );
-$page->stringc( $f1, 20, 306, 600, "Test: $0" );
-$page->stringc( $f1, 20, 306, 550, 'Markus Baertschi (markus@markus.org)' );
+$page->stringc( $f1, 20, 306, 620, "Test: $0" );
+$page->stringc( $f1, 20, 306, 590, 'Markus Baertschi (markus@markus.org)' );
 
 # Draw some graphics
 ok( $page->line( 100, 200, 100, 600 ), "line" );
@@ -65,6 +64,19 @@ $page->line( 300, 200, 300, 600 );
 $page->line( 100, 400, 500, 400 );
 for ( my $x = 100 ; $x <= 500 ; $x = $x + 25 ) { $page->line( $x,  395, $x,  405 ); }
 for ( my $y = 200 ; $y <= 600 ; $y = $y + 25 ) { $page->line( 295, $y,  305, $y ); }
+
+#ok($page->newpath(),"newp0ath");
+#ok($page->setrgbcolorstroke(1, 0.0, 0.0),"setrgbcolorstroke");
+ok($page->setrgbcolor(0.1, 0.3, 0.8),"setrgbcolor");
+ok($page->set_width(10),"setwidth");
+ok($page->moveto(270,100),"moveto");
+ok($page->lineto(300,160),"lineto");
+ok($page->lineto(330,100),"lineto");
+ok($page->lineto(270,100),"lineto");
+#ok($page->closepath(),"closepath");
+#ok($page->closestroke(),"stroke");
+ok($page->fill(),"fill");
+ok($page->stroke(),"stroke");
 
 ok( $page->set_width(2), "set_width" );
 my ( $x, $y, $x2, $y2 );

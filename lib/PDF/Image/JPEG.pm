@@ -3,11 +3,14 @@
 #
 # Author: Michael Gross <info@mdgrosse.net>
 #
-# Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
+# Copyright 1999-2001 Fabien Tassin
 # Copyright 2007-     Markus Baertschi <markus@markus.org>
 #
 # Please see the CHANGES and Changes file for the detailed change log
 #
+# Please do not use any of the methods here directly. You will be
+# punished with your application no longer working after an upgrade !
+# 
 
 package PDF::Image::JPEG;
 use strict;

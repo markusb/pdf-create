@@ -1,9 +1,9 @@
 #
 # PDF::Create - create PDF files
 #
-# Original Author: Fabien Tassin <fta@sofaraway.org>
+# Original Author: Fabien Tassin
 #
-# Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
+# Copyright 1999-2001 Fabien Tassin
 # Copyright 2007-     Markus Baertschi <markus@markus.org>
 # Copyright 2010      Gary Lieberman
 #
@@ -1075,6 +1075,8 @@ sub get_data
 
 1;
 
+__END__
+
 =head1 NAME
 
 PDF::Create - create PDF files
@@ -1083,8 +1085,12 @@ PDF::Create - create PDF files
 
 Create PDF output from your perl program using a couple of subroutines to
 handle text, fonts, images and drawing primitives. Simple documents are
-easy to create with the supplied routines. For complex stuff some understanding
-of the underlying Postscript/PDF format is necessary.
+easy to create with the supplied routines. 
+
+For complex stuff some understanding of the underlying Postscript/PDF format 
+is necessary. In this case it might be better go with the more complete
+L<PDF::API2> modules to gain more features at the expense of a steeper learning
+curve. 
 
 
   use PDF::Create;
@@ -1137,7 +1143,7 @@ section and many other PDF elements.
 
 =over 5
 
-=item * new
+=item * new([parameters])
 
 Create a new pdf structure for your PDF.
 
@@ -1155,54 +1161,54 @@ C<new> returns an object handle used to add more stuff to the PDF.
 
 =over 10
 
-=item filename:
+=item 'filename'
 
 destination file that will contain the resulting
 PDF or an already opened filehandle or '-' for stdout.
 
-=item Version: 
+=item 'Version'
 
-can be 1.0 to 1.3 (default: 1.2)
+PDF Version to claim, can be 1.0 to 1.3 (default: 1.2)
 
-=item PageMode: 
+=item 'PageMode'
 
 how the document should appear when opened. 
 
-Allowed values are:
+Allowed values are
 
-- UseNone: Open document with neither outline nor thumbnails visible. This is the default value.
+- 'UseNone' Open document with neither outline nor thumbnails visible. This is the default value.
 
-- UseOutlines: Open document with outline visible.
+- 'UseOutlines' Open document with outline visible.
 
-- UseThumbs: Open document with thumbnails visible.
+- 'UseThumbs' Open document with thumbnails visible.
 
-- FullScreen: Open document in full-screen mode. In full-screen mode, 
+- 'FullScreen' Open document in full-screen mode. In full-screen mode, 
 there is no menu bar, window controls, nor any other window present.
 
-=item Author: 
+=item 'Author'
 
 the name of the person who created this document
 
-=item Creator: 
+=item 'Creator' 
 
 If the document was converted into a PDF document
   from another form, this is the name of the application that
-  created the original document.
+  created the document.
 
-- Title: the title of the document
+- 'Title' the title of the document
 
-- Subject: the subject of the document
+- 'Subject' the subject of the document
 
-- Keywords: keywords associated with the document
+- 'Keywords' keywords associated with the document
 
-- CreationDate: the date the document was created. This is passed
+- 'CreationDate' the date the document was created. This is passed
   as an anonymous array in the same format as localtime returns.
   (ie. a struct tm).
 
 =back
 
 If you are writing a CGI you can send your PDF on the fly to stdout 
-directly to the browser using '-' as filename.
+or directly to the browser using '-' as filename.
 
 CGI Example:
 
@@ -1214,52 +1220,55 @@ CGI Example:
 			                'CreationDate' => [ localtime ],
                            );
 
+=item * close()
 
-=item * close
+You must call close() after you have added all the contents as
+most of the real work building the PDF is performed there. If
+omit calling close you get no PDF output !
 
-Most of the real work building the PDF is performed in the close method.
-It can there fore not be omitted, like a file close.
-
-=item * get_data
+=item * get_data()
 
 If you didn't ask the $pdf object to write its output to a file, you
 can pick up the pdf code by calling this method. It returns a big string.
 You need to call C<close> first, mind.
 
-=item * add_comment [string]
+=item * add_comment([string])
 
-Add a comment to the document.
+Add a comment to the document. The string will show up in
+the PDF as postscript-stype comment:
 
-=item * new_outline [parameters]
+    % this is a postscript comment
+
+=item * new_outline([parameters])
 
 Add an outline to the document using the given parameters.
 Return the newly created outline.
 
 Parameters can be:
 
-- Title: the title of the outline. Mandatory.
+- 'Title' the title of the outline. Mandatory.
 
-- Destination: the destination of this outline. In this version, it is
+- 'Destination' the Destination of this outline item. In this version, it is
 only possible to give a page as destination. The default destination is
 the current page.
 
-- Parent: the parent of this outline in the outlines tree. This is an
-outline object.
+- 'Parent' the parent of this outline in the outlines tree. This is an
+outline object. This way you represent the tree of your outlines.
 
 Example:
 
-  my $outline = $pdf->new_outline('Title' => 'Item 1',
-                                  'Destination' => $page);
-  $outline->new_outline('Title' => 'Item 1.1');
-  $pdf->new_outline('Title' => 'Item 1.2',
-                    'Parent' => $outline);
+  my $outline = $pdf->new_outline('Title' => 'Item 1');
+  $pdf->new_outline('Title' => 'Item 1.1', 'Parent' => $outline);
+  $pdf->new_outline('Title' => 'Item 1.2', 'Parent' => $outline);
   $pdf->new_outline('Title' => 'Item 2');
 
 
-=item * new_page
+=item * new_page([parameters])
 
 Add a page to the document using the given parameters. C<new_page> must
 be called first to initialize a root page, used as model for further pages.
+
+Example:
 
   my $a4 = $pdf->new_page( 'MediaBox' => $pdf->get_page_size('A4') );
   my $page1 = $a4->new_page;
@@ -1267,16 +1276,16 @@ be called first to initialize a root page, used as model for further pages.
   my $page2 = $a4->new_page;
   $page2->string($f1, 20, 306, 396, "some text on page 2");
 
-Returns a handle to the newly created page.  
+Returns a handle to the newly created page.
 
 Parameters can be:
 
-- Parent: the parent of this page in the pages tree. This is a
+- 'Parent' the parent of this page in the pages tree. This is a
 page object.
 
-- Resources: Resources required by this page.
+- 'Resources' Resources required by this page.
 
-- MediaBox: Rectangle specifying the natural size of the page,
+- 'MediaBox' Rectangle specifying the natural size of the page,
 for example the dimensions of an A4 sheet of paper. The coordinates
 are measured in default user space units. It must be the reference
 of a 4 values array. You can use C<get_page_size> to get the size of
@@ -1284,21 +1293,21 @@ standard paper sizes.
   C<get_page_size> knows about A0-A6, A4L (landscape), Letter, Legal,
 Broadsheet, Ledger, Tabloid, Executive and 36x36.
 
-- CropBox: Rectangle specifying the default clipping region for
+- 'CropBox' Rectangle specifying the default clipping region for
 the page when displayed or printed. The default is the value of
 the MediaBox.
 
-- ArtBox: Rectangle specifying an area of the page to be used when
+- 'ArtBox' Rectangle specifying an area of the page to be used when
 placing PDF content into another application. The default is the value
 of the CropBox. [PDF 1.3]
 
-- TrimBox: Rectangle specifying the intended finished size
+- 'TrimBox' Rectangle specifying the intended finished size
 of the page (for example, the dimensions of an A4 sheet of paper).
 In some cases, the MediaBox will be a larger rectangle, which includes
 printing instructions, cut marks, or other content. The default is
 the value of the CropBox. [PDF 1.3].
 
-- BleedBox: Rectangle specifying the region to which all page
+- 'BleedBox' Rectangle specifying the region to which all page
 content should be clipped if the page is being output in a production
 environment. In such environments, a bleed area is desired, to
 accommodate physical limitations of cutting, folding, and trimming
@@ -1306,12 +1315,12 @@ equipment. The actual printed page may include printer's marks that
 fall outside the bleed box. The default is the value of the CropBox.
 [PDF 1.3]
 
-- Rotate: Specifies the number of degrees the page should be rotated
+- 'Rotate' Specifies the number of degrees the page should be rotated
 clockwise when it is displayed or printed. This value must be zero
 (the default) or a multiple of 90. The entire page, including contents
 is rotated.
 
-=item * get_page_size
+=item * get_page_size(<pagesize>)
 
 Returns the size of standard paper sizes to use for MediaBox-parameter
 of C<new_page>. C<get_page_size> has one required parameter to 
@@ -1320,33 +1329,30 @@ ledger, tabloid, legal, executive and 36x36. Default is a4.
 
   my $root = $pdf->new_page( 'MediaBox' => $pdf->get_page_size('A4') );
 
-=item * font
+=item * font([parameters])
 
 Prepare a font using the given arguments. This font will be added
 to the document only if it is used at least once before the close method
 is called.
 
-  my $f1 = $pdf->font( 'Subtype'  => 'Type1',
-	  				   'Encoding' => 'WinAnsiEncoding',
-					   'BaseFont' => 'Helvetica'
-				     );
+  my $f1 = $pdf->font('BaseFont' => 'Helvetica');
 
 
 Parameters can be:
 
-- Subtype: Type of font. PDF defines some types of fonts. It must be
+- 'Subtype' Type of font. PDF defines some types of fonts. It must be
 one of the predefined type Type1, Type3, TrueType or Type0.
 
 In this version, only Type1 is supported. This is the default value.
 
-- Encoding: Specifies the encoding from which the new encoding differs.
+- 'Encoding' Specifies the encoding from which the new encoding differs.
 It must be one of the predefined encodings MacRomanEncoding,
 MacExpertEncoding or WinAnsiEncoding.
 
 In this version, only WinAnsiEncoding is supported. This is the default
 value.
 
-- BaseFont: The PostScript name of the font. It can be one of the following
+- 'BaseFont' The PostScript name of the font. It can be one of the following
 base fonts: Courier, Courier-Bold, Courier-BoldOblique, Courier-Oblique,
 Helvetica, Helvetica-Bold, Helvetica-BoldOblique, Helvetica-Oblique,
 Times-Roman, Times-Bold, Times-Italic or Times-BoldItalic.
@@ -1357,29 +1363,44 @@ The default font is Helvetica.
 
 =item * URI links
 
-URI links within a PDF document are referred to as annotations.  You create an
-anntation using the annotation function as follows:
+URI links have two components, the text or graphics object and the area
+where the mouseclick should occur.
+
+For the object to be clicked on you'll use standard text of drawing methods.
+
+To define the click-sensitive area and the destination URI you use the
+C<annotation()> method.  
+
+=item annotation([parameters])
+
+Define an annotation. This is a sensitive area in the PDF document where
+text annotations are shown or links launched. C(PDF::Create) only supports
+URI links at this time. 
 
 Example:
 
-     $pdf->annotation(
+    # Draw a string and undeline it to show it is a link 
+    $pdf->string($f1,10,450,200,'http://www.cpan.org')
+    $l=$pdf->string_underline($f1,10,450,200,'http://www.cpan.org')
+    # Create the hot area with the link to open on click 
+    $pdf->annotation(
              Subtype => 'Link',
              URI     => 'http://www.cpan.org',
              x       => 450,
              y       => 200,
-             w       => 120,
+             w       => $l,
              h       => 15,
-             Border  => [1,1,1]
-     );
+             Border  => [0,0,0]
+    );
 
 The point (x, y) is the bottom left corner of the rectangle containing hotspot 
 rectangle, (w, h) are the width and height of the hotspot rectangle.
 The Border describes the thickness of the border surrounding the rectangle hotspot. 
 
 The function C<string_undeline> return the width of the string,
-it can be used directly for the width of the hotspot rectangle.
+this can be used directly for the width of the hotspot rectangle.
 
-=item * image filename
+=item * image(<filename>)
 
 Prepare an XObject (image) using the given arguments. This image will be added
 to the document if it is referenced at least once before the close method
@@ -1387,7 +1408,7 @@ is called. In this version GIF, interlaced GIF and JPEG is supported.
 Usage of interlaced GIFs are slower because they are decompressed, modified 
 and compressed again.
 The gif support is limited to images with a lwz min code size of 8. Small
-images with few colors can have a smaller min code size. 
+images with few colors can have a smaller min code size and will not work.
 
 Parameters: 
 
@@ -1395,26 +1416,26 @@ Parameters:
 
 =back
 
+
 =head2 Page methods
 
-This section describes the methods that can be used by a PDF::Create::Page
-object.
+Page methods are used to draw stuff on a page. Although these
+methods are packaged in the separate module C<PDF::Create::Page>
+you should call them always through the $page handler you get from
+the C<new_page()> method.
 
-In its current form, this class is divided into two main parts, one for
-drawing (using PostScript like paths) and one for writing.
-
-Some methods are not described here because they must not be called
-directly (e.g. C<new> and C<add> ).
+There are internal changes on the horizon who will break code
+calling methods differently !  
 
 =over 5
 
-=item * new_page
+=item * new_page()
 
 Add a sub-page to the current page.
 
 See C<new_page> above
 
-=item * string font size x y text alignment
+=item * string(font, size, x, y, text [,alignment] )
 
 Add text to the current page using the font object at the given size and
 position. The point (x, y) is the bottom left corner of the rectangle
@@ -1429,7 +1450,7 @@ Example :
  		        'BaseFont' => 'Helvetica');
     $page->string($f1, 20, 306, 396, "some text");
 
-=item * string_underline font size x y text alignment
+=item * string_underline(font, size, x, y, text [,alignment] )
 
 Draw a line for underlining. The parameters are the same as for the string
 function, but only the line is drawn. To draw an underlined string you
@@ -1440,23 +1461,24 @@ Example :
     $page->string($f1, 20, 306, 396, "some underlined text");
     $page->string_underline($f1, 20, 306, 396, "some underlined text");
 
+To change the color of your text use the C<setrgbcolor> function.
+
 C<string_underline> returns the length of the string. So its return
 value can be used directly for the bounding box of an annotation.
 
-
-=item * stringl font size x y text
+=item * stringl(font size x y text)
 
 Same as C<string>.
 
-=item * stringr font size x y text
+=item * stringr(font size x y text)
 
 Same as C<string> but right aligned (alignment 'r').
 
-=item * stringc font size x y text
+=item * stringc(font size x y text)
 
 Same as C<string> but centered (alignment 'c').
 
-=item * printnl text font size x y
+=item * printnl(text font size x y)
 
 Similar to C<string> but parses the string for newline and prints each part
 on a separate line. Lines spacing is the same as the font-size. Returns the
@@ -1471,83 +1493,88 @@ Attention: There is no provision for changing pages. If you run out of
 space on the current page this will draw the string(s) outside the page and
 it will be invisble !
 
-=item * string_width font text
+=item * string_width(font,text)
 
 Return the size of the text using the given font in default user space units.
-This does not contain the size of the font yet.
+This does not contain the size of the font yet, to get the length you must
+multiply by the font size. 
 
-=item * line x1 y1 x2 y2
+=item * line(x1, y1, x2, y2)
 
 Draw a line between (x1, y1) and (x2, y2).
 
-=item * set_width w
+=item * set_width(w)
 
-Set the width of subsequent lines to w points.
+Set the width of subsequent lines to C<w> points.
 
-=item * setrgbcolor r g b
+=item * setrgbcolor(r, g, b)
 
-Set the color of the subsequent drawing operations. R,G and B is a value
-between 0.0 and 1.0.
+=item * setrgbcolorstroke(r, g, b)
 
-=back
+Set the color of the subsequent drawing operations.
 
-=head2 Low level drawing methods
+PDF distinguishes between the stroke and fill operations
+and provides separate color settings for each. The C<setrgbcolor()>
+method sets the fill colors used for normal text or filled objects.
+The C<setrgbcolorstroke()> sets the stroke color used for lines.
 
-=over 5
-
-=item * moveto x y
+=item * moveto(x, y)
 
 Moves the current point to (x, y), omitting any connecting line segment.
 
-=item * lineto x y
+=item * lineto(x, y)
 
 Appends a straight line segment from the current point to (x, y).
-The current point is (x, y).
+The current point is then set to (x, y).
 
-=item * curveto x1 y1 x2 y2 x3 y3
+=item * curveto(x1, y1, x2, y2, x3, y3)
 
 Appends a Bezier curve to the path. The curve extends from the current
 point to (x3 ,y3) using (x1 ,y1) and (x2 ,y2) as the Bezier control
-points. The new current point is (x3 ,y3).
+points. The new current point is the set to (x3 ,y3).
 
-=item * rectangle x y w h
+=item * rectangle(x, y, w, h)
 
-Adds a rectangle to the current path.
+Draws a rectangle.
 
-=item * closepath
+=item * closepath()
 
 Closes the current subpath by appending a straight line segment
-from the current point to the starting point of the subpath.
+from the current point to the starting point of the path.
 
-=item * newpath
+=item * newpath()
 
-Ends the path without filling or stroking it.
+Ends the current path. The next drawing operation will start a new path.
 
-=item * stroke
+=item * stroke()
 
-Strokes the path.
+Strokes (draws) the path.
 
-A typical usage is 
-
-  $page->newpath;
-  $page->setrgbcolorstroke 0.1 0.3 0.8;
-  $page->moveto 100 100;
-  $page->lineto 200 100;
-  $page->stroke;
-
-=item * closestroke
+=item * closestroke()
 
 Closes and strokes the path.
 
-=item * fill
+=item * fill()
 
 Fills the path using the non-zero winding number rule.
 
-=item * fill2
+=item * fill2()
 
 Fills the path using the even-odd rule
 
-=item * image image_id xpos ypos xalign yalign xscale yscale rotate xskew yskew
+Example drawing: 
+
+  # draw a filled triangle
+  $page->newpath;
+  $page->setrgbcolor 0.1 0.3 0.8;
+  $page->moveto 100 100;
+  $page->lineto 260 300;
+  $page->lineto 300 100;
+  $page->lineto 100 100;
+  $page->fill;
+
+
+=item * image( image_id, xpos, ypos, xalign, yalign, xscale, yscale, rotate, xskew, yskew)
 
 Inserts an image.
 
@@ -1561,7 +1588,7 @@ Parameters can be:
 
 - xscale, yscale: Scaling of image. 1.0 is original size.
 
-- rotate: Rotation of image. 0 is no rotation, 2*pi is 360� rotation.
+- rotate: Rotation of image. 0 is no rotation, 2*pi is 360° rotation.
 
 - xskew, yskew: Skew of image.
 
@@ -1569,12 +1596,25 @@ Parameters can be:
 
 =head1 SEE ALSO
 
-L<PDF::Create::Page>, L<http://www.adobe.com/devnet/pdf/pdf_reference.html>
-L<http://github.com/markusb/pdf-create>
+Adobe PDF reference L<http://www.adobe.com/devnet/pdf/pdf_reference.html>
+
+My git repository for PDF::Create L<http://github.com/markusb/pdf-create>
+
+=head2 Other PDF procesing CPAN modules
+
+L<http://search.cpan.org/perldoc?PDF::Labels> Routines to produce formatted pages of mailing labels in PDF, uses PDF::Create internally
+
+L<http://search.cpan.org/perldoc?PDF::Haru> Perl interface to Haru Free PDF Library
+
+L<http://search.cpan.org/perldoc?PDF::EasyPDF> PDF creation from a one-file module, similar to PDF::Create
+
+L<http://search.cpan.org/perldoc?PDF::CreateSimple> Yet another PDF creation module
+
+L<http://search.cpan.org/perldoc?PDF::Report> A wrapper written for PDF::API2
 
 =head1 AUTHORS
 
-Fabien Tassin (fta@sofaraway.org)
+Fabien Tassin
 
 GIF and JPEG-support: Michael Gross (info@mdgrosse.net)
 
@@ -1590,5 +1630,6 @@ modified version, please attach a note listing the modifications
 you have made.
 
 Copyright 2007-, Markus Baertschi
+Copyright 2010, Gary Lieberman
 
 =cut

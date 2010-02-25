@@ -1,14 +1,17 @@
 #
 # PDF::Create::Outline - PDF outline support for PDF::Create
 #
-# Author: Fabien Tassin <fta@sofaraway.org>
+# Author: Fabien Tassin
 #
-# Copyright 1999-2001 Fabien Tassin <fta@sofaraway.org>
+# Copyright 1999-2001 Fabien Tassin
 # Copyright 2007-     Markus Baertschi <markus@markus.org>
 # Copyright 2010      Gary Lieberman
 #
 # Please see the CHANGES and Changes file for the detailed change log
 #
+# Please do not use any of the methods here directly. You will be
+# punished with your application no longer working after an upgrade !
+# 
 
 package PDF::Create::Outline;
 
