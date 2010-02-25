@@ -50,6 +50,7 @@ while(<IN>){
        chop $ver;
        $ver =~ s/^.*\///;
        $ver =~ s/~.*$//;
+       $ver =~ s/\^.*$//;
        if ($ver =~ /.* undefined/) { $ver = "(no version yet)"; }
     print OUT "commit $sha...   PDF::Create $ver\n";
   } else {

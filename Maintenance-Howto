@@ -2,7 +2,7 @@
 Howto and Reference for PDF::Create Maintenance
 -----------------------------------------------
 
-This file is a short reference for me to avoif forgetting stuff.
+This file is a short reference for me to avoid forgetting stuff.
 
 Publish a new release:
 - Make sure all changes are committed (git status)
@@ -13,7 +13,7 @@ Publish a new release:
 - Run make manifest
 - Run make test
 - Run make dist
-- Run git commit -m "Version x.yy"
+- Run git commit -a -m "Version x.yy"
 - Run git tag -a 1.05 -m "PDF::Create Version 1.05"
 - Upload tar.gz to pause.cpan.org
 
