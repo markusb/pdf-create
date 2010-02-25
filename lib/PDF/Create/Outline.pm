@@ -24,7 +24,7 @@ use Data::Dumper;
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 1.00;
+$VERSION = 1.05;
 $DEBUG   = 0;
 
 sub new

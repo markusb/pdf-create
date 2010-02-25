@@ -23,7 +23,6 @@ if (! -x $git) {
   printf "Skipping... (git not found/installed)\n";
   exit (0);
 }
-
 if (! ($user=`git config --get user.name 2>/dev/null`)) {
   printf "Skipping... (git not found/installed or user.name not defined)\n";
   exit (0);

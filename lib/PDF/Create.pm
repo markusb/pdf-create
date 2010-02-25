@@ -27,7 +27,7 @@ require Exporter;
 @EXPORT    = qw();
 @EXPORT_OK = qw($VERSION);
 
-our $VERSION = "1.05-rc2";
+our $VERSION = 1.05;
 my $DEBUG = 0;
 
 
