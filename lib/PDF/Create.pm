@@ -1089,11 +1089,16 @@ Create PDF output from your perl program using a couple of subroutines to
 handle text, fonts, images and drawing primitives. Simple documents are
 easy to create with the supplied routines. 
 
+In addition to be reasonable simple C<PDF::Create> is written in pure Perl
+and has no external dependencies (libraries, other modules, etc.). It should
+run on any platform where perl is available. 
+
 For complex stuff some understanding of the underlying Postscript/PDF format 
 is necessary. In this case it might be better go with the more complete
 L<PDF::API2> modules to gain more features at the expense of a steeper learning
 curve. 
 
+Example PDF creation with C<PDF::Create>: 
 
   use PDF::Create;
   # initialize PDF
@@ -1363,7 +1368,25 @@ The Symbol or ZapfDingbats fonts are not supported in this version.
 
 The default font is Helvetica.
 
-=item * URI links
+=item * image(<filename>)
+
+Prepare an XObject (image) using the given arguments. This image will be added
+to the document if it is referenced at least once before the close method
+is called. In this version GIF, interlaced GIF and JPEG is supported. 
+Usage of interlaced GIFs are slower because they are decompressed, modified 
+and compressed again.
+The gif support is limited to images with a LZW minimum code size of 8. Small
+images with few colors can have a smaller minimum code size and will not work.
+
+Parameters: 
+
+- filename: file name of image (required).
+
+=back
+
+=head2 URI links
+
+=over 5
 
 URI links have two components, the text or graphics object and the area
 where the mouseclick should occur.
@@ -1373,7 +1396,7 @@ For the object to be clicked on you'll use standard text of drawing methods.
 To define the click-sensitive area and the destination URI you use the
 C<annotation()> method.  
 
-=item annotation([parameters])
+=item * annotation([parameters])
 
 Define an annotation. This is a sensitive area in the PDF document where
 text annotations are shown or links launched. C(PDF::Create) only supports
@@ -1402,22 +1425,7 @@ The Border describes the thickness of the border surrounding the rectangle hotsp
 The function C<string_undeline> return the width of the string,
 this can be used directly for the width of the hotspot rectangle.
 
-=item * image(<filename>)
-
-Prepare an XObject (image) using the given arguments. This image will be added
-to the document if it is referenced at least once before the close method
-is called. In this version GIF, interlaced GIF and JPEG is supported. 
-Usage of interlaced GIFs are slower because they are decompressed, modified 
-and compressed again.
-The gif support is limited to images with a lwz min code size of 8. Small
-images with few colors can have a smaller min code size and will not work.
-
-Parameters: 
-
-- filename: file name of image (required).
-
 =back
-
 
 =head2 Page methods
 
@@ -1516,9 +1524,11 @@ Set the width of subsequent lines to C<w> points.
 Set the color of the subsequent drawing operations.
 
 PDF distinguishes between the stroke and fill operations
-and provides separate color settings for each. The C<setrgbcolor()>
-method sets the fill colors used for normal text or filled objects.
-The C<setrgbcolorstroke()> sets the stroke color used for lines.
+and provides separate color settings for each. 
+
+- C<setrgbcolor()> sets the fill colors used for normal text or filled objects.
+
+- C<setrgbcolorstroke()> sets the stroke color used for lines.
 
 =item * moveto(x, y)
 
@@ -1596,11 +1606,61 @@ Parameters can be:
 
 =back
 
+=head1 Limitations
+
+C<PDF::Create> comes with a couple of limitations or known caveats:
+
+=over 5
+
+=item PDF Size / Memory
+
+C<PDF::Create> assembles the entire PDF in memory if you create very
+large documents on a machine with a small amount of memory your program
+can fail because it runs out of memory.
+
+=item Small GIF images
+
+Some gif images get created with a minimal lzw code size of less than 8.
+C<PDF::Create> can not decode those and they must be converted.   
+
+=back
+
+=head1 Support
+
+I support C<PDF::Create> in my spare time between work and family, so
+the amount of work I put in is limited.
+
+If you experience a problem make sure you are at the latest version first
+many things have already been fixed.
+
+Please register bug at the CPAN bug tracking system at L<http://rt.cpan.org>
+or send email to C<bug-PDF-Create [at] rt.cpan.org>
+
+Be sure to include the following information:
+
+- PDF::Create Version you are running
+
+- Perl version (perl -v)
+
+- Operating System vendor and version
+
+- Details about your operating environment that might be related to the issue being described
+
+- Exact cut and pasted error or warning messages
+
+- The shortest, clearest code you can manage to write which reproduces the bug described.
+
+I appreciate patches against the latest released version of C<PDF::Create> which fix the bug.
+
+B<Feature request> can be submitted like bugs. If you provide patch for a feature which
+does not go against the C<PDF::Create> philosophy (keep it simple) then you have a good chance
+for it to be accepted.
+
 =head1 SEE ALSO
 
 Adobe PDF reference L<http://www.adobe.com/devnet/pdf/pdf_reference.html>
 
-My git repository for PDF::Create L<http://github.com/markusb/pdf-create>
+My git repository for C<PDF::Create> L<http://github.com/markusb/pdf-create>
 
 =head2 Other PDF procesing CPAN modules
 
