@@ -13,9 +13,6 @@
 
 package PDF::Create;
 
-our $VERSION = "1.05-rc2";
-my $DEBUG = 0;
-
 use strict;
 use Carp qw(confess croak cluck carp);
 use FileHandle;
@@ -29,6 +26,10 @@ require Exporter;
 @ISA       = qw(Exporter);
 @EXPORT    = qw();
 @EXPORT_OK = qw($VERSION);
+
+our $VERSION = "1.05-rc2";
+my $DEBUG = 0;
+
 
 #
 # Create a new PDF file
@@ -371,9 +372,10 @@ sub dictionary
 sub indirect_obj
 {
 	my $self = shift;
-	my ( $id, $gen );
-	my $name = $_[1];
-	my $type = $_[0][1]{'Type'}[1]
+	
+	my ( $id, $gen, $type, $name );
+	$name = $_[1];
+	$type = $_[0][1]{'Type'}[1]
 	  if defined $_[0][1] && ref $_[0][1] eq 'HASH' && defined $_[0][1]{'Type'};
 	if ( defined $name && defined $self->{'reservations'}{$name} ) {
 		( $id, $gen ) = @{ $self->{'reservations'}{$name} };
@@ -984,7 +986,6 @@ sub image
 	my $colorspace;
 
 	my @a;
-	my $s;
 
 	if ( $filename =~ /\.gif$/i ) {
 		$self->{'images'}{$num} = PDF::Image::GIF->new();
@@ -1024,7 +1025,7 @@ sub image
 
 	#set Filter
 	$#a = -1;
-	foreach $s ( @{ $image->{filter} } ) {
+	foreach my $s ( @{ $image->{filter} } ) {
 		push @a, $self->name($s);
 	}
 	if ( $#a >= 0 ) {
@@ -1033,7 +1034,7 @@ sub image
 
 	#set additional DecodeParms
 	$#a = -1;
-	foreach $s ( keys %{ $image->{decodeparms} } ) {
+	foreach my $s ( keys %{ $image->{decodeparms} } ) {
 		push @a, $s;
 		push @a, $self->number( $image->{decodeparms}{$s} );
 	}

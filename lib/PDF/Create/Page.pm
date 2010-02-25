@@ -496,7 +496,7 @@ sub image
 	$self->{'pdf'}->uses_xobject( $self, $image );
 	$self->{'pdf'}->add("q\n");
 
-	# TODO: Merge position with rotate
+	# TODO: image: Merge position with rotate
 	$self->{'pdf'}->add("1 0 0 1 $xpos $ypos cm\n") if ( $xpos || $ypos );
 	if ($rotate) {
 		my $sinth = sin($rotate);
