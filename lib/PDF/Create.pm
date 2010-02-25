@@ -1399,7 +1399,7 @@ C<annotation()> method.
 =item * annotation([parameters])
 
 Define an annotation. This is a sensitive area in the PDF document where
-text annotations are shown or links launched. C(PDF::Create) only supports
+text annotations are shown or links launched. C<PDF::Create> only supports
 URI links at this time. 
 
 Example:
@@ -1422,7 +1422,7 @@ The point (x, y) is the bottom left corner of the rectangle containing hotspot
 rectangle, (w, h) are the width and height of the hotspot rectangle.
 The Border describes the thickness of the border surrounding the rectangle hotspot. 
 
-The function C<string_undeline> return the width of the string,
+The function C<string_undeline> returns the width of the string,
 this can be used directly for the width of the hotspot rectangle.
 
 =back
