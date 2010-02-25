@@ -9,12 +9,12 @@ lib/PDF/Image/JPEG.pm
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
-pdf-logo.gif
-pdf-logo.jpg
 pdf-logo.svg
 README
+sample-cgi.pl
+sample.pl
 t/01-basic.t
-t/02-text.t
+t/02-string.t
 t/03-image.t
 t/04-drawing.t
 t/05-outline.t
@@ -22,6 +22,8 @@ t/06-annotation.t
 t/07-fonts.t
 t/09-cgi-script.pl
 t/09-cgi.t
+t/10-text.t
+t/50-versioning.t
 t/99-wifi-parabola.t
 t/pdf-logo.gif
 t/pdf-logo.jpg

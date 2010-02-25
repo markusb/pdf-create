@@ -14,11 +14,14 @@
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
+use File::Basename;
 use Test::More tests => 9;
 
 # we want the resulting pdf file to have the same name as the test
 my $pdfname = $0;
 $pdfname =~ s/\.t/\.pdf/;
+my $gifname = dirname($0) . "/pdf-logo.gif";
+my $jpgname = dirname($0) . "/pdf-logo.jpg";
 
 ###################################################################
 #
@@ -57,13 +60,13 @@ $page->stringc( $f1, 20, 306, 550, 'Markus Baertschi (markus@markus.org)' );
 
 # Add a JPEG image
 $page->string( $f1, 20, 200, 400, 'JPEG Image:' );
-my $jpg1 = $pdf->image('pdf-logo.jpg');
-ok( $page->image( 'image' => $jpg1, 'xscale' => 0.2, 'yscale' => 0.2, 'xpos' => 350, 'ypos' => 400 ), "jpg" );
+my $jpg1 = $pdf->image($jpgname);
+ok( $page->image( 'image' => $jpg1, 'xscale' => 0.2, 'yscale' => 0.2, 'xpos' => 350, 'ypos' => 400 ), "jpg created" );
 
 # Add a GIF image
 $page->string( $f1, 20, 200, 200, 'GIF Image:' );
-my $gif1 = $pdf->image('pdf-logo.gif');
-ok( $page->image( 'image' => $gif1, 'xscale' => 0.2, 'yscale' => 0.2, 'xpos' => 350, 'ypos' => 200 ), "gif" );
+my $gif1 = $pdf->image($gifname);
+ok( $page->image( 'image' => $gif1, 'xscale' => 0.2, 'yscale' => 0.2, 'xpos' => 350, 'ypos' => 200 ), "gif created" );
 
 # Wrap up the PDF and close the file
 ok( !$pdf->close(), "Close PDF" );
@@ -72,15 +75,15 @@ ok( !$pdf->close(), "Close PDF" );
 #
 # Check the resulting pdf for errors with pdftotext
 #
-if ( -x '/usr/bin/pdftotext' ) {
+SKIP: {
+	skip '/usr/bin/pdftotext not installed', 1 if (! -x '/usr/bin/pdftotext');
+
 	if ( my $out = `/usr/bin/pdftotext $pdfname -` ) {
 		ok( 1, "pdf reads fine with pdftotext" );
 	} else {
 		ok( 0, "pdftotext reported errors" );
 		exit 1;
 	}
-} else {
-	skip("Skip: /usr/bin/pdftotext not installed");
 }
 
 #

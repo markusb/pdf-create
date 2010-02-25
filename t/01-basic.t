@@ -63,15 +63,15 @@ ok( !$pdf->close(), "Close PDF" );
 #
 # Check the resulting pdf for errors with pdftotext
 #
-if ( -x '/usr/bin/pdftotext' ) {
+SKIP: {
+	skip '/usr/bin/pdftotext not installed', 1 if (! -x '/usr/bin/pdftotext');
+
 	if ( my $out = `/usr/bin/pdftotext $pdfname -` ) {
 		ok( 1, "pdf reads fine with pdftotext" );
 	} else {
 		ok( 0, "pdftotext reported errors" );
 		exit 1;
 	}
-} else {
-	skip("Skip: /usr/bin/pdftotext not installed");
 }
 
 #

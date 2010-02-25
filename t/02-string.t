@@ -6,16 +6,15 @@
 #
 # Please see the CHANGES and Changes file for the detailed change log
 #
-# Testing text-related functions
+# Testing string functions
 # - string l/r/c
 # - string_underline
-# - text
 #
 
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
-use Test::More tests => 28;
+use Test::More tests => 19;
 
 # we want the resulting pdf file to have the same name as the test
 my $pdfname = $0;
@@ -72,19 +71,6 @@ ok( $page->string_underline( $f1, 15, 306, 240, 'Right string underlined', 'r' )
 ok( $page->string( $f1, 15, 306, 220, 'Centered string underlined', 'c' ), "string c" );
 ok( $page->string_underline( $f1, 15, 306, 220, 'Centered string underlined', 'c' ), "string_underline c" );
 
-# Use the text function
-ok( $page->text( 'start' => 1, 'Td' => '200 190', 'Tf' => "$f1 9", 'TL' => 9, 'end' => 1 ), 'text setup' );
-ok( $page->text( 'text' => 'text with new text function 1' ), 'text' );
-ok( $page->text( 'T*' => 1, 'text' => 'text with new text function 2', 'end' => 1 ), 'text' );
-ok( $page->text( 'start' => 1, 'Td' => '200 160', 'Tf' => "$f1 9", 'Tr' => 1, 'text' => 'text in rendering mode 1', 'end' => 1 ),
-	'text' );
-ok( $page->text( 'start' => 1, 'Td' => '200 150', 'Tr' => 0, 'Tz' => 200, 'text' => 'Text Stretched', 'end' => 1 ), 'text' );
-ok( $page->text( 'start' => 1, 'Tz' => 100, 'end' => 1 ), 'text' );
-
-ok( $page->text( 'start' => 1, 'rot' => '30 440 100', 'Tf' => "$f1 9", 'text' => 'text rotated 30', 'end' => 1 ), 'text' );
-ok( $page->text( 'start' => 1, 'rot' => '60 420 100', 'Tf' => "$f1 9", 'text' => 'text rotated 60', 'end' => 1 ), 'text' );
-ok( $page->text( 'start' => 1, 'rot' => '90 400 100', 'Tf' => "$f1 9", 'text' => 'text rotated 90', 'end' => 1 ), 'text' );
-
 # Wrap up the PDF and close the file
 ok( !$pdf->close(), "Close PDF" );
 
@@ -92,15 +78,15 @@ ok( !$pdf->close(), "Close PDF" );
 #
 # Check the resulting pdf for errors with pdftotext
 #
-if ( -x '/usr/bin/pdftotext' ) {
+SKIP: {
+	skip '/usr/bin/pdftotext not installed', 1 if (! -x '/usr/bin/pdftotext');
+
 	if ( my $out = `/usr/bin/pdftotext $pdfname -` ) {
 		ok( 1, "pdf reads fine with pdftotext" );
 	} else {
 		ok( 0, "pdftotext reported errors" );
 		exit 1;
 	}
-} else {
-	skip("Skip: /usr/bin/pdftotext not installed");
 }
 
 #
