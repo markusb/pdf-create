@@ -1386,8 +1386,6 @@ Parameters:
 
 =head2 URI links
 
-=over 5
-
 URI links have two components, the text or graphics object and the area
 where the mouseclick should occur.
 
@@ -1395,6 +1393,8 @@ For the object to be clicked on you'll use standard text of drawing methods.
 
 To define the click-sensitive area and the destination URI you use the
 C<annotation()> method.  
+
+=over 5
 
 =item * annotation([parameters])
 
