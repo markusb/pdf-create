@@ -31,10 +31,54 @@ my @cases = (
 	['()', 'string', undef],  # TODO what should happen? eliminate warnings 
 	['(0)', 'string', 0],
 
+
+	# TODO: shouldn't this check if the given value was indeed a number?
+	['any string', 'number', 'any string'],  # anything
+	['x', 'number', 'x'],                    # anything
+	[undef, 'number', undef],  # TODO eliminate warnngs
+	[0, 'number', 0],
+
+
+	['/any string', 'name', 'any string'],  # anything
+	['/x', 'name', 'x'],                    # anything
+	['/', 'name', undef],  # TODO ???, eliminate warnings
+	['/0', 'name', 0],
 	
+	['[/anything]', 'array', [ 
+			['name', 'anything'],
+		] 
+	],
+	['[/42 abc]', 'array', [ 
+			['name', 42],
+			['verbatim', 'abc'],
+		] 
+	],
+
+	# TODO more complex test cases for dictionary
+	["<<\n/42 /text\n/abc (qwe)\n>>", 'dictionary', {
+			42 => ['name', 'text'],
+			abc => ['string', 'qwe'],
+		}
+	],
+
+	# TODO more complex test cases for object
+	["abc 42 obj\n/qwe\nendobj", 'object', [
+		'abc', 42, ['name', 'qwe']
+		]
+	],
+
+	["abc 42 R", 'ref', ['abc', 42]],
+
+	["<<\n/abc 42\n/23 /qwe\n>>\nstream\nsome data\nendstream\n", 
+	'stream', {
+			Data => 'some data',
+			abc  => ['number', 42],
+			23   => ['name', 'qwe'],
+		}
+	],
 );
 
-plan tests => 1+@cases;
+plan tests => 2 + @cases;
 
 {
 	my @warn;
@@ -44,8 +88,18 @@ plan tests => 1+@cases;
 	like $warn[1], qr/PDF::Create::encode: empty argument, called by/, 'no params';
 };
 
+eval {
+	PDF::Create::encode('something');
+};
+like $@, qr{Error: unknown type 'something'}, 'exception';
+	
+
 foreach my $c (@cases) {
 	my $expected = shift @$c;
-	is PDF::Create::encode(@$c),   $expected, join ",", @$c;
+	my $name = $c->[0];
+	if ($name !~ m/^(array|dictionary|object|ref|stream)$/) {
+		$name .= ",$c->[1]";
+	}
+	is PDF::Create::encode(@$c),   $expected, $name;
 }
 
