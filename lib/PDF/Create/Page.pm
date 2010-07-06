@@ -21,6 +21,7 @@ use Exporter;
 use Carp;
 use FileHandle;
 use Data::Dumper;
+use POSIX qw(setlocale LC_NUMERIC);
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
@@ -316,7 +317,7 @@ sub text
 		$self->{'pdf'}->page_stream($self);
 		$self->{'pdf'}->add("$ptext");
 	}
-	PDF::Create::debug( 3, "text(): $ptext" );
+    PDF::Create::debug( 3, "text(): $ptext" );
 	1;
 }
 
@@ -465,6 +466,10 @@ sub image
 	my $self   = shift;
 	my %params = @_;
 
+    # Switch to the 'C' locale, we need printf floats with a '.', not a ','
+    my $savedLocale = setlocale(LC_NUMERIC);
+    setlocale(LC_NUMERIC,'C');
+
 	my $img    = $params{'image'} || "1.2";
 	my $image  = $img->{num};
 	my $xpos   = $params{'xpos'} || 0;
@@ -513,6 +518,10 @@ sub image
 	}
 	$self->{'pdf'}->add("/Image$image Do\n");
 	$self->{'pdf'}->add("Q\n");
+
+	# Switch to the 'C' locale, we need printf floats with a '.', not a ','
+    setlocale(LC_NUMERIC,$savedLocale);
+	
 }
 
 #######################################################################
