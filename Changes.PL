@@ -36,7 +36,7 @@ if ("$user" ne "Markus Baertschi") {
 #
 # Read the git log and add version tab info
 #
-print "Creating chages file form git commit log\n";
+print "Creating Changes file from git commit log\n";
 open(OUT,">Changes") or die "Can not open 'Changes' for writing\n";
 open(IN,"git log --abbrev-commit --pretty |") or die "Problem running git log\n";
 while(<IN>){
