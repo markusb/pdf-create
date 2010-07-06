@@ -1,7 +1,7 @@
 #
 # Makefile.PL for PDF::Create
 #
-
+use 5.005;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
