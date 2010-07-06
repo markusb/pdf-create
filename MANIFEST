@@ -1,12 +1,12 @@
 CHANGES
 Changes
-Changes.PL
 lib/PDF/Create.pm
 lib/PDF/Create/Outline.pm
 lib/PDF/Create/Page.pm
 lib/PDF/Image/GIF.pm
 lib/PDF/Image/JPEG.pm
 Makefile.PL
+Build.PL
 MANIFEST
 MANIFEST.SKIP
 pdf-logo.svg
@@ -22,8 +22,6 @@ t/06-annotation.t
 t/07-fonts.t
 t/09-cgi-script.pl
 t/09-cgi.t
-t/10-text.t
-t/50-versioning.t
 t/99-wifi-parabola.t
 t/pdf-logo.gif
 t/pdf-logo.jpg
