@@ -1523,6 +1523,11 @@ Set the width of subsequent lines to C<w> points.
 
 Set the color of the subsequent drawing operations.
 
+Each color ranges from 0.0 to 1.0, that is, darkest red (0.0) to
+brightest red (1.0).  The same holds for green and blue.  These three
+colors mix additively to produce the colors between black (0.0, 0.0,
+0.0) and white (1.0, 1.0, 1.0).
+
 PDF distinguishes between the stroke and fill operations
 and provides separate color settings for each. 
 
