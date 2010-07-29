@@ -419,8 +419,10 @@ sub string_width
 	my $string = shift;
 
 	croak 'No string given' unless defined $string;
-
+    
 	my $fname = $self->{'pdf'}{'fonts'}{$font}{'BaseFont'}[1];
+	croak('Unknown font: ' . $fname) unless defined $$font_widths{$fname}[ ord "M" ];
+	
 	my $w     = 0;
 	for my $c ( split '', $string ) {
 		$w += $$font_widths{$fname}[ ord $c ];
