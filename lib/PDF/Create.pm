@@ -1120,7 +1120,7 @@ Example PDF creation with C<PDF::Create>:
   my $toc = $pdf->new_outline('Title' => 'Title Page', 'Destination' => $page);
 
   # Write some text
-  $page->stringc($f2, 40, 306, 426, "PDF::Create");
+  $page->stringc($f1, 40, 306, 426, "PDF::Create");
   $page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
   $page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
 
