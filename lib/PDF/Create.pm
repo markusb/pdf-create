@@ -1170,8 +1170,11 @@ C<new> returns an object handle used to add more stuff to the PDF.
 
 =item 'filename'
 
-destination file that will contain the resulting
-PDF or an already opened filehandle or '-' for stdout.
+destination file that will contain the resulting PDF or '-' for stdout. 
+
+=item 'fh'
+
+an already opened filehandle that will contain the resulting PDF.
 
 =item 'Version'
 
