@@ -1085,7 +1085,9 @@ PDF::Create - create PDF files
 
 =head1 SYNOPSIS
 
-Create PDF output from your perl program using a couple of subroutines to
+C<PDF::Create> provides an easy module to create PDF output from your
+perl programs. It is designed to be easy to use and simple to install and
+maintain. It provides a couple of subroutines to
 handle text, fonts, images and drawing primitives. Simple documents are
 easy to create with the supplied routines. 
 
