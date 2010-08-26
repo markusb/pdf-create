@@ -1614,6 +1614,12 @@ Parameters can be:
 
 - xskew, yskew: Skew of image.
 
+Example jpeg image:
+
+  # include a jpeg image with scaling to 20% size
+  my $jpg = $pdf->image("image.jpg");
+  $page->image( 'image' => $jpg, 'xscale' => 0.2, 'yscale' => 0.2, 'xpos' => 350, 'ypos' => 400 );
+
 =back
 
 =head1 Limitations
