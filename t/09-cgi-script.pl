@@ -22,7 +22,7 @@ print CGI::header( -type => 'application/pdf' );
 #
 # Start the pdf with '-' (stdout) as filename
 #
-my $pdf = new PDF::Create( 'filename' => "-",
+my $pdf = PDF::Create->new( 'filename' => "-",
 						   'Version'  => 1.2,
 						   'PageMode' => 'UseOutlines',
 						   'Author'   => 'Markus Baertschi',
