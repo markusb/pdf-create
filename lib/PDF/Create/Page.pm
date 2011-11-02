@@ -25,7 +25,7 @@ use POSIX qw(setlocale LC_NUMERIC);
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw();
-$VERSION = 1.05;
+$VERSION = 1.06;
 $DEBUG   = 0;
 
 my $font_widths = &init_widths;
