@@ -14,8 +14,7 @@
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
-
-print "1..2\n";
+use Test::More tests => 1;
 
 my $pdfname = $0;
 $pdfname =~ s/\.t/\.pdf/;
@@ -129,17 +128,13 @@ $page->line( $dx + $ay * 2, $dy, $dx + $ay * 2, $dy + $ay * 2 );
 # Wrap up the PDF and close the file
 $pdf->close;
 
+
+################################################################
+#
 # Check the resulting pdf for errors with pdftotext
-if ( -x '/usr/bin/pdftotext' ) {
-	if ( my $out = `/usr/bin/pdftotext $pdfname -` ) {
-		print "ok 1 # pdf reads fine with pdftotext\n";
-	} else {
-		print "not ok 1 # pdftotext reported errors\n";
-		exit 1;
-	}
-} else {
-	print "ok 1 # Warning: /usr/bin/pdftotext not installed";
+#
+SKIP: {
+	skip '/usr/bin/pdftotext not installed', 1 if (! -x '/usr/bin/pdftotext');
+    my $out = `/usr/bin/pdftotext $pdfname /dev/null 2>&1`;
+    ok( $out eq "", "pdftotext $out");
 }
-
-print "ok 2 # test $0 ended\n";
-

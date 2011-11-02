@@ -8,13 +8,17 @@ Publish a new release:
 - Make sure all changes are committed (git status)
 - Verify/Fix $VERSION in lib/PDF/Create.pm
   -> This is the master for the version number
+- Run git commit -a -m "Version x.yy"
+- Run git tag -a x.yy -m "PDF::Create Version x.yy"
 - Run make Makefile.PL
 - Run make 
 - Run make manifest
 - Run make test
+- Run Changes.PL
+- Add short description of essential changes to Changes file
 - Run make dist
-- Run git commit -a -m "Version x.yy"
-- Run git tag -a 1.05 -m "PDF::Create Version 1.05"
+- Copy tar to AIX and test
+
 - Upload tar.gz to pause.cpan.org
 
 - Update $VERSION in lib/PDF/Create.pm to the future dev version

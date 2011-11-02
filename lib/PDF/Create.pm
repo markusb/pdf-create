@@ -27,7 +27,7 @@ require Exporter;
 @EXPORT    = qw();
 @EXPORT_OK = qw($VERSION);
 
-our $VERSION = 1.05;
+our $VERSION = "1.06";
 my $DEBUG = 0;
 
 
@@ -1085,7 +1085,9 @@ PDF::Create - create PDF files
 
 =head1 SYNOPSIS
 
-Create PDF output from your perl program using a couple of subroutines to
+C<PDF::Create> provides an easy module to create PDF output from your
+perl programs. It is designed to be easy to use and simple to install and
+maintain. It provides a couple of subroutines to
 handle text, fonts, images and drawing primitives. Simple documents are
 easy to create with the supplied routines. 
 
@@ -1120,7 +1122,7 @@ Example PDF creation with C<PDF::Create>:
   my $toc = $pdf->new_outline('Title' => 'Title Page', 'Destination' => $page);
 
   # Write some text
-  $page->stringc($f2, 40, 306, 426, "PDF::Create");
+  $page->stringc($f1, 40, 306, 426, "PDF::Create");
   $page->stringc($f1, 20, 306, 396, "version $PDF::Create::VERSION");
   $page->stringc($f1, 20, 306, 300, 'by John Doe <john.doe@example.com>');
 
@@ -1170,8 +1172,11 @@ C<new> returns an object handle used to add more stuff to the PDF.
 
 =item 'filename'
 
-destination file that will contain the resulting
-PDF or an already opened filehandle or '-' for stdout.
+destination file that will contain the resulting PDF or '-' for stdout. 
+
+=item 'fh'
+
+an already opened filehandle that will contain the resulting PDF.
 
 =item 'Version'
 
@@ -1386,8 +1391,6 @@ Parameters:
 
 =head2 URI links
 
-=over 5
-
 URI links have two components, the text or graphics object and the area
 where the mouseclick should occur.
 
@@ -1396,10 +1399,12 @@ For the object to be clicked on you'll use standard text of drawing methods.
 To define the click-sensitive area and the destination URI you use the
 C<annotation()> method.  
 
+=over 5
+
 =item * annotation([parameters])
 
 Define an annotation. This is a sensitive area in the PDF document where
-text annotations are shown or links launched. C(PDF::Create) only supports
+text annotations are shown or links launched. C<PDF::Create> only supports
 URI links at this time. 
 
 Example:
@@ -1422,7 +1427,7 @@ The point (x, y) is the bottom left corner of the rectangle containing hotspot
 rectangle, (w, h) are the width and height of the hotspot rectangle.
 The Border describes the thickness of the border surrounding the rectangle hotspot. 
 
-The function C<string_undeline> return the width of the string,
+The function C<string_undeline> returns the width of the string,
 this can be used directly for the width of the hotspot rectangle.
 
 =back
@@ -1523,6 +1528,11 @@ Set the width of subsequent lines to C<w> points.
 
 Set the color of the subsequent drawing operations.
 
+Each color ranges from 0.0 to 1.0, that is, darkest red (0.0) to
+brightest red (1.0).  The same holds for green and blue.  These three
+colors mix additively to produce the colors between black (0.0, 0.0,
+0.0) and white (1.0, 1.0, 1.0).
+
 PDF distinguishes between the stroke and fill operations
 and provides separate color settings for each. 
 
@@ -1603,6 +1613,12 @@ Parameters can be:
 - rotate: Rotation of image. 0 is no rotation, 2*pi is 360° rotation.
 
 - xskew, yskew: Skew of image.
+
+Example jpeg image:
+
+  # include a jpeg image with scaling to 20% size
+  my $jpg = $pdf->image("image.jpg");
+  $page->image( 'image' => $jpg, 'xscale' => 0.2, 'yscale' => 0.2, 'xpos' => 350, 'ypos' => 400 );
 
 =back
 
