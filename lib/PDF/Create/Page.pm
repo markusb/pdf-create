@@ -46,7 +46,7 @@ sub new
 sub add
 {
 	my $self = shift;
-	my $page = new PDF::Create::Page();
+	my $page = PDF::Create::Page->new();
 	$page->{'pdf'}    = $self->{'pdf'};
 	$page->{'Parent'} = $self;
 	$page->{'id'}     = shift;

@@ -40,7 +40,7 @@ sub new
 sub add
 {
 	my $self    = shift;
-	my $outline = new PDF::Create::Outline();
+	my $outline = PDF::Create::Outline->new();
 	$outline->{'id'}     = shift;
 	$outline->{'name'}   = shift;
 	$outline->{'Parent'} = $self;

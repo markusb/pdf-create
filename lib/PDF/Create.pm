@@ -46,7 +46,7 @@ sub new
 	$self->{'version'} = $params{'Version'} || "1.2";
 	$self->{'trailer'} = {};
 
-	$self->{'pages'}          = new PDF::Create::Page();
+	$self->{'pages'}          = PDF::Create::Page->new();
 	$self->{'current_page'}   = $self->{'pages'};
 	$self->{'pages'}->{'pdf'} = $self;                     # circular reference
 	$self->{'page_count'}     = 0;
@@ -61,7 +61,7 @@ sub new
 		$self->{'fh'} = $params{'fh'};
 	} elsif ( defined $params{'filename'} ) {
 		$self->{'filename'} = $params{'filename'};
-		my $fh = new FileHandle "> $self->{'filename'}";
+		my $fh = FileHandle->new( "> $self->{'filename'}" );
 		carp "PDF::Create.pm: $self->{'filename'}: $!\n" unless defined $fh;
 		binmode $fh;
 		$self->{'fh'} = $fh;
@@ -529,7 +529,7 @@ sub new_outline
 
 	my %params = @_;
 	unless ( defined $self->{'outlines'} ) {
-		$self->{'outlines'}             = new PDF::Create::Outline();
+		$self->{'outlines'}             = PDF::Create::Outline->new();
 		$self->{'outlines'}->{'pdf'}    = $self;                        # circular reference
 		$self->{'outlines'}->{'Status'} = 'opened';
 	}
@@ -1104,7 +1104,7 @@ Example PDF creation with C<PDF::Create>:
 
   use PDF::Create;
   # initialize PDF
-  my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+  my $pdf = PDF::Create->new('filename'     => 'mypdf.pdf',
 			                'Author'       => 'John Doe',
 			                'Title'        => 'Sample PDF',
 			                'CreationDate' => [ localtime ], );
@@ -1158,7 +1158,7 @@ Create a new pdf structure for your PDF.
 
 Example:
 
-  my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+  my $pdf = PDF::Create->new('filename'     => 'mypdf.pdf',
                             'Version'      => 1.2,
                             'PageMode'     => 'UseOutlines',
                             'Author'       => 'John Doe',
@@ -1226,7 +1226,7 @@ CGI Example:
 
   use CGI; use PDF::Create;
   print CGI::header( -type => 'application/x-pdf', -attachment => 'sample.pdf' );
-  my $pdf = new PDF::Create('filename'     => '-', # Stdout
+  my $pdf = PDF::Create->new('filename'     => '-', # Stdout
                             'Author'       => 'John Doe',
                             'Title'        => 'My title',
 			                'CreationDate' => [ localtime ],

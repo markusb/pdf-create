@@ -370,7 +370,7 @@ sub Open
 	my $flags;
 
 	$self->{filename} = $filename;
-	my $fh = new FileHandle "$filename";
+	my $fh = FileHandle->new("$filename");
 	if ( !defined $fh ) { $self->{error} = "PDF::Image::GIF.pm: $filename: $!"; return 0 }
 	binmode $fh;
 	read $fh, $s, 3;
@@ -484,7 +484,7 @@ sub ReadData
 
 	my $result = "";
 
-	my $fh = new FileHandle $self->{filename};
+	my $fh = FileHandle->new($self->{filename});
 	if ( !defined $fh ) { $self->{error} = "PDF::Image::GIF.pm: $self->{filename}: $!"; return 0 }
 	binmode $fh;
 	seek( $fh, $self->{private}->{datapos}, 0 );
