@@ -16,15 +16,12 @@
 package PDF::Create::Page;
 
 use strict;
-use vars qw(@ISA @EXPORT $VERSION $DEBUG);
-use Exporter;
+use vars qw($VERSION $DEBUG);
 use Carp;
 use FileHandle;
 use Data::Dumper;
 use POSIX qw(setlocale LC_NUMERIC);
 
-@ISA     = qw(Exporter);
-@EXPORT  = qw();
 $VERSION = 1.06;
 $DEBUG   = 0;
 

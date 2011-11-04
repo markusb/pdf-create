@@ -21,12 +21,6 @@ use PDF::Create::Outline;
 use PDF::Image::GIF;
 use PDF::Image::JPEG;
 
-our ( @ISA, @EXPORT, @EXPORT_OK, @EXPORT_FAIL );
-require Exporter;
-@ISA       = qw(Exporter);
-@EXPORT    = qw();
-@EXPORT_OK = qw($VERSION);
-
 our $VERSION = "1.06";
 my $DEBUG = 0;
 

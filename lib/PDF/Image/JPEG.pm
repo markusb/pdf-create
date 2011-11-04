@@ -14,12 +14,9 @@
 
 package PDF::Image::JPEG;
 use strict;
-use vars qw(@ISA @EXPORT $VERSION $DEBUG);
-use Exporter;
+use vars qw($VERSION $DEBUG);
 use FileHandle;
 
-@ISA     = qw(Exporter);
-@EXPORT  = qw();
 $VERSION = 1.06;
 $DEBUG   = 0;
 

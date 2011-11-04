@@ -16,14 +16,11 @@
 package PDF::Create::Outline;
 
 use strict;
-use vars qw(@ISA @EXPORT $VERSION $DEBUG);
-use Exporter;
+use vars qw($VERSION $DEBUG);
 use Carp;
 use FileHandle;
 use Data::Dumper;
 
-@ISA     = qw(Exporter);
-@EXPORT  = qw();
 $VERSION = 1.06;
 $DEBUG   = 0;
 
