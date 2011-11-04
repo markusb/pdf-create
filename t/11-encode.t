@@ -95,11 +95,9 @@ like $@, qr{Error: unknown type 'something'}, 'exception';
 	
 
 foreach my $c (@cases) {
-	my $expected = shift @$c;
-	my $name = $c->[0];
-	if ($name !~ m/^(array|dictionary|object|ref|stream)$/) {
-		$name .= ",$c->[1]";
-	}
-	is PDF::Create::encode(@$c),   $expected, $name;
+	my ($expected, $type, $value) = @$c;
+
+	my $name = $type . (defined $value ? ",$value" : '');
+	is PDF::Create::encode($type, $value), $expected, $name;
 }
 
