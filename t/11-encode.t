@@ -4,6 +4,14 @@ use strict;
 use PDF::Create;
 use Test::More;
 
+# The cases array contains test-cases
+# In each triple the first value is the expected return value
+# of the encode() method.
+# The second and third values are the two parameters 
+# of the encode() method.
+# The third parameter is optional but it can also be a complex
+# data structure.
+# expected, type, value
 my @cases = (
 	[undef, 'null'],
 	['anything', 'null', 'anything'], # any value
