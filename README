@@ -8,14 +8,14 @@
     number of primitives, and emit the result as a PDF file or
     stream. PDF stands for Portable Document Format.
 
-    Documents can have several pages, a table of content, an
-    information section and many other PDF elements. More
-    functionnalities will be added as needs arise.
+    Documents can have several pages, a table of contents, an
+    information section, and many other PDF elements. More
+    functionalities will be added as needs arise.
 
     Documents are constructed on the fly so the memory footprint is
     not tied to the size of the pages but only to their number.
 
-    It's main advantage over the other PDF modules is that it does
+    Its main advantage over the other PDF modules is that it does
     not depend on other modules and is perl only (no compiler needed).
     If you want a quick and dirty way of creating pdf's, PDF::Create
     is for you. If you need a complete Framework to create complex
@@ -46,7 +46,7 @@
                             'Encoding' => 'WinAnsiEncoding',
                             'BaseFont' => 'Helvetica-Bold');
 
-        # Prepare a Table of Content
+        # Prepare a Table of Contents
         my $toc = $pdf->new_outline('Title' => 'Document',
                                     'Destination' => $page);
         $toc->new_outline('Title' => 'Section 1');
@@ -84,7 +84,7 @@
     distribution and do one of the following:
 
     a.  Create a makefile by running Makefile.PL using the perl
-        program into whose library you want to install and then run
+        program into whose library you want to install. Then, run
         make three times:
 
             perl Makefile.PL
@@ -110,7 +110,7 @@
 
     I have taken over maintenence of PDF::Create as Fabien has disappeared
     and did no longer maintain it in the last years.
-    The last version of PDF::Create from Fabien is 0.06. All never versions
+    The last version of PDF::Create from Fabien is 0.06. All newer versions
     have been modified by me.
 
     I maintain PDF::Create in git. You can access the repository directly
