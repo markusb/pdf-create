@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w
-
 use strict;
 use PDF::Create;
 use Test::More;
 
+
 # The cases array contains test-cases
 # In each triple the first value is the expected return value
 # of the encode() method.
-# The second and third values are the two parameters 
+# The second and third values are the two parameters
 # of the encode() method.
 # The third parameter is optional but it can also be a complex
 # data structure.
@@ -36,7 +36,7 @@ my @cases = (
 
 	['(any string)', 'string', 'any string'],  # anything
 	['(x)', 'string', 'x'],                    # anything
-	['()', 'string', undef],  # TODO what should happen? eliminate warnings 
+	['()', 'string', undef],  # TODO what should happen? eliminate warnings
 	['(0)', 'string', 0],
 
 
@@ -51,15 +51,15 @@ my @cases = (
 	['/x', 'name', 'x'],                    # anything
 	['/', 'name', undef],  # TODO ???, eliminate warnings
 	['/0', 'name', 0],
-	
-	['[/anything]', 'array', [ 
+
+	['[/anything]', 'array', [
 			['name', 'anything'],
-		] 
+		]
 	],
-	['[/42 abc]', 'array', [ 
+	['[/42 abc]', 'array', [
 			['name', 42],
 			['verbatim', 'abc'],
-		] 
+		]
 	],
 
 	# TODO more complex test cases for dictionary
@@ -70,17 +70,17 @@ my @cases = (
 	],
 
 	# TODO more complex test cases for object
-	["abc 42 obj\n/qwe\nendobj", 'object', [
-		'abc', 42, ['name', 'qwe']
+	["abc 43 obj\n/qwe\nendobj", 'object', [
+		'abc', 43, ['name', 'qwe']
 		]
 	],
 
-	["abc 42 R", 'ref', ['abc', 42]],
+	["abc 45 R", 'ref', ['abc', 45]],
 
-	["<<\n/abc 42\n/23 /qwe\n>>\nstream\nsome data\nendstream\n", 
+	["<<\n/abc 46\n/23 /qwe\n>>\nstream\nsome data\nendstream\n",
 	'stream', {
 			Data => 'some data',
-			abc  => ['number', 42],
+			abc  => ['number', 46],
 			23   => ['name', 'qwe'],
 		}
 	],
@@ -100,12 +100,22 @@ eval {
 	PDF::Create::encode('something');
 };
 like $@, qr{Error: unknown type 'something'}, 'exception';
-	
+
+my %too_random = map { $_ => 1 } qw(dictionary stream);
 
 foreach my $c (@cases) {
 	my ($expected, $type, $value) = @$c;
 
-	my $name = $type . (defined $value ? ",$value" : '');
-	is PDF::Create::encode($type, $value), $expected, $name;
+	SKIP: {
+		if ($too_random{$type}) {
+			if (defined $ENV{PERL_PERTURB_KEYS} and $ENV{PERL_PERTURB_KEYS} == 2
+				and defined $ENV{PERL_HASH_SEED} and $ENV{PERL_HASH_SEED} == 1) {
+			} else {
+				skip 'PERL_PERTURB_KEYS=2 and PERL_HASH_SEED=1 has to be in order to have predictable Hashes', 1;
+			}
+		}
+		my $name = $type . (defined $value ? ",$value" : '');
+		is PDF::Create::encode($type, $value), $expected, $name;
+	}
 }
 
