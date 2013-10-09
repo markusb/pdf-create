@@ -9,7 +9,8 @@
 
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
-use File::Basename;
+use File::Basename qw(dirname);
+use File::Spec;
 use PDF::Create;
 use Test::More tests => 2;
 use Config;
