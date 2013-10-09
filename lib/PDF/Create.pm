@@ -242,12 +242,14 @@ sub encode
 		$val = "$val";
 	  }
 	  || $type eq 'string' && do {
+		$val = '' if not defined $val;
 		$val = "($val)";    # TODO: split it. Quote parentheses.
 	  }
 	  || $type eq 'number' && do {
 		$val = "$val";
 	  }
 	  || $type eq 'name' && do {
+		$val = '' if not defined $val;
 		$val = "/$val";
 	  }
 	  || $type eq 'array' && do {
