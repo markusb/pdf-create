@@ -5,3 +5,5 @@ t/*.pdf
 MYMETA*
 *.swp
 PDF-Create-*
+Build
+_build/
