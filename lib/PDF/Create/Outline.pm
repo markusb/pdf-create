@@ -14,15 +14,15 @@
 # 
 
 package PDF::Create::Outline;
-
 use strict;
-use vars qw($VERSION $DEBUG);
+use warnings;
+
 use Carp;
 use FileHandle;
 use Data::Dumper;
 
-$VERSION = 1.06;
-$DEBUG   = 0;
+our $VERSION = 1.07;
+our $DEBUG   = 0;
 
 sub new
 {

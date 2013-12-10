@@ -8,6 +8,7 @@ Further changes are documented in the 'Changes' file
     Some more test case
     Code clean-up (remove indirect calls)
     Remove Build.PL
+    use warnings;
 
 1.06 2010.07.06
 

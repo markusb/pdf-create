@@ -14,16 +14,16 @@
 #
 
 package PDF::Create::Page;
-
 use strict;
-use vars qw($VERSION $DEBUG);
+use warnings;
+
 use Carp;
 use FileHandle;
 use Data::Dumper;
 use POSIX qw(setlocale LC_NUMERIC);
 
-$VERSION = 1.06;
-$DEBUG   = 0;
+our $VERSION = '1.07';
+our $DEBUG   = 0;
 
 my $font_widths = &init_widths;
 

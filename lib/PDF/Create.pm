@@ -12,8 +12,9 @@
 #
 
 package PDF::Create;
-
 use strict;
+use warnings;
+
 use Carp qw(confess croak cluck carp);
 use FileHandle;
 use PDF::Create::Page;
@@ -21,7 +22,7 @@ use PDF::Create::Outline;
 use PDF::Image::GIF;
 use PDF::Image::JPEG;
 
-our $VERSION = "1.06";
+our $VERSION = "1.07";
 my $DEBUG = 0;
 
 
