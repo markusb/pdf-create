@@ -10,6 +10,7 @@ Further changes are documented in the 'Changes' file
     Remove Build.PL
     use warnings;
     Officially require perl 5.006.
+    Move example file to the eg/ directory
 
 1.06 2010.07.06
 
