@@ -9,6 +9,7 @@ Further changes are documented in the 'Changes' file
     Code clean-up (remove indirect calls)
     Remove Build.PL
     use warnings;
+    Officially require perl 5.006.
 
 1.06 2010.07.06
 
