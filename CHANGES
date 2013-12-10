@@ -1,6 +1,10 @@
 
 Further changes are documented in the 'Changes' file
 
+1.08
+
+    Eliminate pipe from CGI test script t/09
+
 1.07 2013.12.10
 
     New maintainer SZABGAB

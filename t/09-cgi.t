@@ -22,7 +22,17 @@ my $cginame = File::Spec->catfile(dirname($0) . "/09-cgi-script.pl");
 #
 # run the cgi
 #
-ok( !system(qq($Config{"perlpath"} $cginame | $Config{"perlpath"} -n -e "print if \$. > 2" >$pdfname)), "CGI executes" );
+my @out = `$Config{"perlpath"} $cginame`;
+shift @out;
+shift @out;
+#diag $out;
+diag $pdfname;
+if (open my $fh, '>', $pdfname) {
+	print $fh @out;
+	close $fh;
+}
+
+ok scalar(@out), "CGI executes";
 
 ################################################################
 #
