@@ -1076,6 +1076,8 @@ sub get_data
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 PDF::Create - create PDF files
