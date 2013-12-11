@@ -1,4 +1,6 @@
 
+    Some POD updates.
+
 1.08 2013.12.11
 
     Eliminate pipe from CGI test script t/09
