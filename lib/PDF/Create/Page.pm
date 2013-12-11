@@ -22,7 +22,7 @@ use FileHandle;
 use Data::Dumper;
 use POSIX qw(setlocale LC_NUMERIC);
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 our $DEBUG   = 0;
 
 my $font_widths = &init_widths;

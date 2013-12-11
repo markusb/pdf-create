@@ -1,14 +1,13 @@
 
-Further changes are documented in the 'Changes' file
-
-1.08
+1.08 2013.12.11
 
     Eliminate pipe from CGI test script t/09
+    Filehandle => FileHandle typo fixed #91312
 
 1.07 2013.12.10
 
     New maintainer SZABGAB
-    Tried to reconstruct entried inthea CHANGES file 
+    Tried to reconstruct entries in the CHANGES file 
     Some more test case
     Code clean-up (remove indirect calls)
     Remove Build.PL

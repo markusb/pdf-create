@@ -10,7 +10,7 @@ WriteMakefile(
 	ABSTRACT_FROM => "lib/PDF/Create.pm",
     'PREREQ_PM'   => {
                'Carp' => 0,
-               'Filehandle' => 0,
+               'FileHandle' => 0,
                'Data::Dumper' => 0,
     },
 	LICENSE       => "perl",

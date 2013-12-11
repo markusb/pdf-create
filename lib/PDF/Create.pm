@@ -22,7 +22,7 @@ use PDF::Create::Outline;
 use PDF::Image::GIF;
 use PDF::Image::JPEG;
 
-our $VERSION = "1.07";
+our $VERSION = '1.08';
 my $DEBUG = 0;
 
 
