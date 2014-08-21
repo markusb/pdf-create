@@ -6,7 +6,7 @@ use PDF::Create;
 use Test::More;
 use Test::LeakTrace;
 
-plan tests => 3;
+plan tests => 4;
 
 my $dir = tempdir( CLEANUP => 1 );
 
@@ -56,7 +56,6 @@ no_leaks_ok {
 };
 
  
-__END__
 no_leaks_ok {
     my $pdf = PDF::Create->new('filename' => "$dir/mypdf.pdf",
                               'Version'  => 1.2,
@@ -102,4 +101,4 @@ no_leaks_ok {
 
     # Add the missing PDF objects and a the footer then close the file
     $pdf->close;
-} "memory_leaks.pl found problems";
+};
