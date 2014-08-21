@@ -12,6 +12,7 @@ WriteMakefile(
 		'Carp'         => 0,
 		'FileHandle'   => 0,
 		'Data::Dumper' => 0,
+		'Scalar::Util' => 0,
 	},
 	TEST_REQUIRES => {
 		'Test::More'      => '1.00',

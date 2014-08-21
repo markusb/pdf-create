@@ -1,5 +1,7 @@
-
+1.09 2014.08.21
+    Eliminate the need for CGI.pm in the test RT #98222
     Some POD updates.
+    Eliminate memory leak RT #93412 thanks to Chris Jack.
 
 1.08 2013.12.11
 

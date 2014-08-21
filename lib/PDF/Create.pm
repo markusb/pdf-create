@@ -17,6 +17,7 @@ use warnings;
 
 use Carp qw(confess croak cluck carp);
 use FileHandle;
+use Scalar::Util qw(weaken);
 use PDF::Create::Page;
 use PDF::Create::Outline;
 use PDF::Image::GIF;
@@ -44,6 +45,7 @@ sub new
 	$self->{'pages'}          = PDF::Create::Page->new();
 	$self->{'current_page'}   = $self->{'pages'};
 	$self->{'pages'}->{'pdf'} = $self;                     # circular reference
+	weaken $self->{pages}{pdf};
 	$self->{'page_count'}     = 0;
 
 	$self->{'outline_count'} = 0;
