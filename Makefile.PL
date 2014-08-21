@@ -13,12 +13,20 @@ WriteMakefile(
                'FileHandle' => 0,
                'Data::Dumper' => 0,
     },
+	TEST_REQUIRES => {
+		'Test::More'      => '1.00',
+		'Test::LeakTrace' => '0.14',
+	},
 	LICENSE       => "perl",
 	dist          => { COMPRESS => "gzip", SUFFIX => "gz" },
 	clean 		  => { FILES => '*.bak *.old mibs/*.dump *.pdf' . 'lib/*/*~ lib/*/*/*~' },
-    META_MERGE => {
-          resources => {
-               repository => 'http://github.com/szabgab/pdf-create',
-          }
-    },
+	META_MERGE => {
+		'meta-spec' => { version => 2 },
+		resources => {
+			repository => {
+				type => 'git',
+				url  => 'http://github.com/szabgab/pdf-create.git',
+				web  => 'http://github.com/szabgab/pdf-create',
+			}
+	}},
 );
