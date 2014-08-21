@@ -49,7 +49,7 @@ no_leaks_ok {
                         'Encoding' => 'WinAnsiEncoding',
                         'BaseFont' => 'Helvetica-Bold');
 
-	$DB::signal = 1;
+	#$DB::signal = 1;
     # Prepare a Table of Content
     my $toc = $pdf->new_outline('Title' => 'Document',
                                 'Destination' => $page);
