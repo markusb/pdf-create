@@ -1681,15 +1681,15 @@ My git repository for C<PDF::Create> L<http://github.com/markusb/pdf-create>
 
 =head2 Other PDF procesing CPAN modules
 
-L<http://search.cpan.org/perldoc?PDF::Labels> Routines to produce formatted pages of mailing labels in PDF, uses PDF::Create internally
+L<PDF::Labels> Routines to produce formatted pages of mailing labels in PDF, uses PDF::Create internally
 
-L<http://search.cpan.org/perldoc?PDF::Haru> Perl interface to Haru Free PDF Library
+L<PDF::Haru> Perl interface to Haru Free PDF Library
 
-L<http://search.cpan.org/perldoc?PDF::EasyPDF> PDF creation from a one-file module, similar to PDF::Create
+L<PDF::EasyPDF> PDF creation from a one-file module, similar to PDF::Create
 
-L<http://search.cpan.org/perldoc?PDF::CreateSimple> Yet another PDF creation module
+L<PDF::CreateSimple> Yet another PDF creation module
 
-L<http://search.cpan.org/perldoc?PDF::Report> A wrapper written for PDF::API2
+L<PDF::Report> A wrapper written for PDF::API2
 
 =head1 AUTHORS
 
