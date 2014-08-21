@@ -20,6 +20,7 @@ use warnings;
 use Carp;
 use FileHandle;
 use Data::Dumper;
+use Scalar::Util qw(weaken);
 
 our $VERSION = '1.08';
 our $DEBUG   = 0;
@@ -41,7 +42,9 @@ sub add
 	$outline->{'id'}     = shift;
 	$outline->{'name'}   = shift;
 	$outline->{'Parent'} = $self;
+	weaken $outline->{Parent};
 	$outline->{'pdf'}    = $self->{'pdf'};
+	weaken $outline->{pdf};
 	my %params = @_;
 	$outline->{'Title'}  = $params{'Title'}  if defined $params{'Title'};
 	$outline->{'Action'} = $params{'Action'} if defined $params{'Action'};

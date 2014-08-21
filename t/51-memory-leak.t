@@ -6,7 +6,7 @@ use PDF::Create;
 use Test::More;
 use Test::LeakTrace;
 
-plan tests => 2;
+plan tests => 3;
 
 my $dir = tempdir( CLEANUP => 1 );
 
@@ -26,9 +26,34 @@ no_leaks_ok {
                               'Author'   => 'Fabien Tassin',
                               'Title'    => 'My title',
                          );
-	#$DB::signal = 1;
     my $root = $pdf->new_page('MediaBox' => [ 0, 0, 612, 792 ]);
-}
+};
+
+no_leaks_ok {
+    my $pdf = PDF::Create->new('filename' => "$dir/mypdf.pdf",
+                              'Version'  => 1.2,
+                              'PageMode' => 'UseOutlines',
+                              'Author'   => 'Fabien Tassin',
+                              'Title'    => 'My title',
+                         );
+    my $root = $pdf->new_page('MediaBox' => [ 0, 0, 612, 792 ]);
+
+    # Add a page which inherits its attributes from $root
+    my $page = $root->new_page;
+
+    # Prepare 2 fonts
+    my $f1 = $pdf->font('Subtype'  => 'Type1',
+                        'Encoding' => 'WinAnsiEncoding',
+                        'BaseFont' => 'Helvetica');
+    my $f2 = $pdf->font('Subtype'  => 'Type1',
+                        'Encoding' => 'WinAnsiEncoding',
+                        'BaseFont' => 'Helvetica-Bold');
+
+	$DB::signal = 1;
+    # Prepare a Table of Content
+    my $toc = $pdf->new_outline('Title' => 'Document',
+                                'Destination' => $page);
+};
 
  
 __END__

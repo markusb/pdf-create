@@ -530,6 +530,7 @@ sub new_outline
 	unless ( defined $self->{'outlines'} ) {
 		$self->{'outlines'}             = PDF::Create::Outline->new();
 		$self->{'outlines'}->{'pdf'}    = $self;                        # circular reference
+		weaken $self->{'outlines'}->{'pdf'};
 		$self->{'outlines'}->{'Status'} = 'opened';
 	}
 	my $parent = $params{'Parent'} || $self->{'outlines'};
