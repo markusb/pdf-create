@@ -6,7 +6,7 @@ use PDF::Create;
 use Test::More;
 use Test::LeakTrace;
 
-plan tests => 1;
+plan tests => 2;
 
 my $dir = tempdir( CLEANUP => 1 );
 
@@ -18,6 +18,18 @@ no_leaks_ok {
                               'Title'    => 'My title',
                          );
 };
+
+no_leaks_ok {
+    my $pdf = PDF::Create->new('filename' => "$dir/mypdf.pdf",
+                              'Version'  => 1.2,
+                              'PageMode' => 'UseOutlines',
+                              'Author'   => 'Fabien Tassin',
+                              'Title'    => 'My title',
+                         );
+	#$DB::signal = 1;
+    my $root = $pdf->new_page('MediaBox' => [ 0, 0, 612, 792 ]);
+}
+
  
 __END__
 no_leaks_ok {
