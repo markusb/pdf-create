@@ -1680,8 +1680,6 @@ for it to be accepted.
 
 Adobe PDF reference L<http://www.adobe.com/devnet/pdf/pdf_reference.html>
 
-My git repository for C<PDF::Create> L<http://github.com/markusb/pdf-create>
-
 =head2 Other PDF procesing CPAN modules
 
 L<PDF::Labels> Routines to produce formatted pages of mailing labels in PDF, uses PDF::Create internally
