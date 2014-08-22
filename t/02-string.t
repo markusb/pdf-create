@@ -25,7 +25,7 @@ $pdfname =~ s/\.t/\.pdf/;
 # start testing
 #
 
-my $pdf = new PDF::Create( 'filename' => "$pdfname",
+my $pdf = PDF::Create->new( 'filename' => "$pdfname",
 						   'Version'  => 1.2,
 						   'PageMode' => 'UseOutlines',
 						   'Author'   => 'Markus Baertschi',

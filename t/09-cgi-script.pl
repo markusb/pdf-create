@@ -8,7 +8,7 @@
 BEGIN { unshift @INC, "lib", "../lib" }
 use strict;
 use PDF::Create;
-use CGI;
+#use CGI;
 
 #
 # Write HTTP header with application/pdf as doc type
@@ -17,12 +17,12 @@ use CGI;
 # You should change this to
 #   -type => 'application/x-pdf', -attachment => $pdfname
 #
-print CGI::header( -type => 'application/pdf' );
+#print CGI::header( -type => 'application/pdf' );
 
 #
 # Start the pdf with '-' (stdout) as filename
 #
-my $pdf = new PDF::Create( 'filename' => "-",
+my $pdf = PDF::Create->new( 'filename' => "-",
 						   'Version'  => 1.2,
 						   'PageMode' => 'UseOutlines',
 						   'Author'   => 'Markus Baertschi',

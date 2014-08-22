@@ -26,18 +26,19 @@ $pdfname =~ s/\.t/\.pdf/;
 # start testing
 #
 
-my $pdf = new PDF::Create( 'filename' => "$pdfname",
+my $pdf = PDF::Create->new( 'filename' => "$pdfname",
 						   'Version'  => 1.2,
 						   'PageMode' => 'UseOutlines',
 						   'Author'   => 'Markus Baertschi',
 						   'Title'    => 'Testing Basic Stuff',
 						 );
-ok( defined $pdf, "Create new PDF" );
+isa_ok( $pdf, 'PDF::Create' );
 
 ok( $pdf->add_comment("Testing Basic Stuff"), "Add a comment" );
 
 my $root = $pdf->new_page( 'MediaBox' => $pdf->get_page_size('A4') );
-ok( defined $root, "Create page root" );
+#ok( defined $root, "Create page root" );
+isa_ok( $root, 'PDF::Create::Page' );
 
 # Prepare font
 my $f1 = $pdf->font( 'Subtype'  => 'Type1',

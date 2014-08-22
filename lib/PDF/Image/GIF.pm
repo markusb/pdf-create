@@ -14,14 +14,11 @@
 
 package PDF::Image::GIF;
 use strict;
-use vars qw(@ISA @EXPORT $VERSION $DEBUG);
-use Exporter;
+use warnings;
 use FileHandle;
 
-@ISA     = qw(Exporter);
-@EXPORT  = qw();
-$VERSION = 1.05;
-$DEBUG   = 0;
+our $VERSION = '1.10';
+our $DEBUG   = 0;
 
 sub new
 {
@@ -370,7 +367,7 @@ sub Open
 	my $flags;
 
 	$self->{filename} = $filename;
-	my $fh = new FileHandle "$filename";
+	my $fh = FileHandle->new("$filename");
 	if ( !defined $fh ) { $self->{error} = "PDF::Image::GIF.pm: $filename: $!"; return 0 }
 	binmode $fh;
 	read $fh, $s, 3;
@@ -484,7 +481,7 @@ sub ReadData
 
 	my $result = "";
 
-	my $fh = new FileHandle $self->{filename};
+	my $fh = FileHandle->new($self->{filename});
 	if ( !defined $fh ) { $self->{error} = "PDF::Image::GIF.pm: $self->{filename}: $!"; return 0 }
 	binmode $fh;
 	seek( $fh, $self->{private}->{datapos}, 0 );

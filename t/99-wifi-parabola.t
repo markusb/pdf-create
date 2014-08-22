@@ -19,7 +19,7 @@ use Test::More tests => 1;
 my $pdfname = $0;
 $pdfname =~ s/\.t/\.pdf/;
 
-my $pdf = new PDF::Create( 'filename' => "$pdfname",
+my $pdf = PDF::Create->new( 'filename' => "$pdfname",
 						   'Version'  => 1.2,
 						   'PageMode' => 'UseOutlines',
 						   'Author'   => 'Markus Baertschi',

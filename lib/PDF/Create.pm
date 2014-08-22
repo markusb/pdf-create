@@ -12,22 +12,18 @@
 #
 
 package PDF::Create;
-
 use strict;
+use warnings;
+
 use Carp qw(confess croak cluck carp);
 use FileHandle;
+use Scalar::Util qw(weaken);
 use PDF::Create::Page;
 use PDF::Create::Outline;
 use PDF::Image::GIF;
 use PDF::Image::JPEG;
 
-our ( @ISA, @EXPORT, @EXPORT_OK, @EXPORT_FAIL );
-require Exporter;
-@ISA       = qw(Exporter);
-@EXPORT    = qw();
-@EXPORT_OK = qw($VERSION);
-
-our $VERSION = "1.06";
+our $VERSION = '1.10';
 my $DEBUG = 0;
 
 
@@ -46,9 +42,10 @@ sub new
 	$self->{'version'} = $params{'Version'} || "1.2";
 	$self->{'trailer'} = {};
 
-	$self->{'pages'}          = new PDF::Create::Page();
+	$self->{'pages'}          = PDF::Create::Page->new();
 	$self->{'current_page'}   = $self->{'pages'};
 	$self->{'pages'}->{'pdf'} = $self;                     # circular reference
+	weaken $self->{pages}{pdf};
 	$self->{'page_count'}     = 0;
 
 	$self->{'outline_count'} = 0;
@@ -61,7 +58,7 @@ sub new
 		$self->{'fh'} = $params{'fh'};
 	} elsif ( defined $params{'filename'} ) {
 		$self->{'filename'} = $params{'filename'};
-		my $fh = new FileHandle "> $self->{'filename'}";
+		my $fh = FileHandle->new( "> $self->{'filename'}" );
 		carp "PDF::Create.pm: $self->{'filename'}: $!\n" unless defined $fh;
 		binmode $fh;
 		$self->{'fh'} = $fh;
@@ -248,12 +245,14 @@ sub encode
 		$val = "$val";
 	  }
 	  || $type eq 'string' && do {
+		$val = '' if not defined $val;
 		$val = "($val)";    # TODO: split it. Quote parentheses.
 	  }
 	  || $type eq 'number' && do {
 		$val = "$val";
 	  }
 	  || $type eq 'name' && do {
+		$val = '' if not defined $val;
 		$val = "/$val";
 	  }
 	  || $type eq 'array' && do {
@@ -529,8 +528,9 @@ sub new_outline
 
 	my %params = @_;
 	unless ( defined $self->{'outlines'} ) {
-		$self->{'outlines'}             = new PDF::Create::Outline();
+		$self->{'outlines'}             = PDF::Create::Outline->new();
 		$self->{'outlines'}->{'pdf'}    = $self;                        # circular reference
+		weaken $self->{'outlines'}->{'pdf'};
 		$self->{'outlines'}->{'Status'} = 'opened';
 	}
 	my $parent = $params{'Parent'} || $self->{'outlines'};
@@ -1079,6 +1079,8 @@ sub get_data
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 PDF::Create - create PDF files
@@ -1104,7 +1106,7 @@ Example PDF creation with C<PDF::Create>:
 
   use PDF::Create;
   # initialize PDF
-  my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+  my $pdf = PDF::Create->new('filename'     => 'mypdf.pdf',
 			                'Author'       => 'John Doe',
 			                'Title'        => 'Sample PDF',
 			                'CreationDate' => [ localtime ], );
@@ -1158,7 +1160,7 @@ Create a new pdf structure for your PDF.
 
 Example:
 
-  my $pdf = new PDF::Create('filename'     => 'mypdf.pdf',
+  my $pdf = PDF::Create->new('filename'     => 'mypdf.pdf',
                             'Version'      => 1.2,
                             'PageMode'     => 'UseOutlines',
                             'Author'       => 'John Doe',
@@ -1226,7 +1228,7 @@ CGI Example:
 
   use CGI; use PDF::Create;
   print CGI::header( -type => 'application/x-pdf', -attachment => 'sample.pdf' );
-  my $pdf = new PDF::Create('filename'     => '-', # Stdout
+  my $pdf = PDF::Create->new('filename'     => '-', # Stdout
                             'Author'       => 'John Doe',
                             'Title'        => 'My title',
 			                'CreationDate' => [ localtime ],
@@ -1528,6 +1530,8 @@ Set the width of subsequent lines to C<w> points.
 
 Set the color of the subsequent drawing operations.
 
+Valid r, g, and b values are each between 0.0 and 1.0, inclusive.
+
 Each color ranges from 0.0 to 1.0, that is, darkest red (0.0) to
 brightest red (1.0).  The same holds for green and blue.  These three
 colors mix additively to produce the colors between black (0.0, 0.0,
@@ -1676,19 +1680,17 @@ for it to be accepted.
 
 Adobe PDF reference L<http://www.adobe.com/devnet/pdf/pdf_reference.html>
 
-My git repository for C<PDF::Create> L<http://github.com/markusb/pdf-create>
-
 =head2 Other PDF procesing CPAN modules
 
-L<http://search.cpan.org/perldoc?PDF::Labels> Routines to produce formatted pages of mailing labels in PDF, uses PDF::Create internally
+L<PDF::Labels> Routines to produce formatted pages of mailing labels in PDF, uses PDF::Create internally
 
-L<http://search.cpan.org/perldoc?PDF::Haru> Perl interface to Haru Free PDF Library
+L<PDF::Haru> Perl interface to Haru Free PDF Library
 
-L<http://search.cpan.org/perldoc?PDF::EasyPDF> PDF creation from a one-file module, similar to PDF::Create
+L<PDF::EasyPDF> PDF creation from a one-file module, similar to PDF::Create
 
-L<http://search.cpan.org/perldoc?PDF::CreateSimple> Yet another PDF creation module
+L<PDF::CreateSimple> Yet another PDF creation module
 
-L<http://search.cpan.org/perldoc?PDF::Report> A wrapper written for PDF::API2
+L<PDF::Report> A wrapper written for PDF::API2
 
 =head1 AUTHORS
 

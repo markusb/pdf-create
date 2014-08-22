@@ -14,14 +14,11 @@
 
 package PDF::Image::JPEG;
 use strict;
-use vars qw(@ISA @EXPORT $VERSION $DEBUG);
-use Exporter;
+use warnings;
 use FileHandle;
 
-@ISA     = qw(Exporter);
-@EXPORT  = qw();
-$VERSION = 1.05;
-$DEBUG   = 0;
+our $VERSION = '1.10';
+our $DEBUG   = 0;
 
 sub new
 {
@@ -166,7 +163,7 @@ sub Open
 	my $adobeflag  = 0;
 	my $components = 0;
 
-	my $fh = new FileHandle $filename;
+	my $fh = FileHandle->new($filename);
 	if ( !defined $fh ) { $self->{error} = "PDF::Image::JPEG.pm: $filename: $!"; return 0 }
 	binmode $fh;
 
@@ -338,7 +335,7 @@ sub ReadData
 	my $s    = "";
 	my $result;
 	my $JPEG_BUFSIZE = 1024;
-	my $fh           = new FileHandle $self->{filename};
+	my $fh           = FileHandle->new($self->{filename});
 	if ( !defined $fh ) { $self->{error} = "PDF::Image::JPEG.pm: $self->{filename}: $!"; return 0 }
 	binmode $fh;
 	seek( $fh, $self->{private}->{datapos}, 0 );

@@ -1,30 +1,73 @@
+1.10 2014.08.22
+    Fix test that used to use CGI.pm
 
-Further changes are documented in the 'Changes' file
+1.09 2014.08.21
+    Eliminate the need for CGI.pm in the test RT #98222
+    Some POD updates.
+    Eliminate memory leak RT #93412 thanks to Chris Jack.
 
-Version 0.09 30.9.2007
-- Markus Baertschi, markus@markus.org
-  Added stringml for multi-line strings
-  Changed get_page_size to case-independent
+1.08 2013.12.11
 
-Version 0.08 3.9.2007
-- Markus Baertschi, markus@markus.org
-  Get back in sync with CPAN/PAUSE
-  Fixed check for open file in Create.pm
-  Touched up the README
+    Eliminate pipe from CGI test script t/09
+    Filehandle => FileHandle typo fixed #91312
 
-Version 0.07
-- Markus Baertschi, markus@markus.org
-  Added image samples to sample.pl
-  Touched up the README
-  Added check for open file in JPEG/GIFImages
+1.07 2013.12.10
 
-Version 0.06
-- Fabien Tassin
-  Added support for JPEG and GIF images
-- Markus Baertschi, markus@markus.org
-  Packaged for release on CPAN
+    New maintainer SZABGAB
+    Tried to reconstruct entries in the CHANGES file 
+    Some more test case
+    Code clean-up (remove indirect calls)
+    Remove Build.PL
+    use warnings;
+    Officially require perl 5.006.
+    Move example file to the eg/ directory
 
-Version 0.01
-- Fabien Tassin
-  Original Release
+1.06 2010.07.06
+
+1.05 2010.02.26
+
+1.04 2009.07.13
+
+1.03 200 2009.03.24
+
+1.02 208.07.10
+
+1.01 2008.06.03
+
+1.00 2008.05.31
+
+0.10 2008.05.31
+
+
+0.09 2007.09.30
+
+    - Markus Baertschi, markus@markus.org
+    - Added stringml for multi-line strings
+    - Changed get_page_size to case-independent
+
+0.08 2007.09.03
+
+    - Markus Baertschi, markus@markus.org
+    - Get back in sync with CPAN/PAUSE
+    - Fixed check for open file in Create.pm
+    - Touched up the README
+
+0.07
+
+    - Markus Baertschi, markus@markus.org
+    - Added image samples to sample.pl
+    - Touched up the README
+    - Added check for open file in JPEG/GIFImages
+
+0.06
+
+    - Fabien Tassin
+    - Added support for JPEG and GIF images
+    - Markus Baertschi, markus@markus.org
+    - Packaged for release on CPAN
+
+0.01
+
+    - Fabien Tassin
+    - Original Release
 
