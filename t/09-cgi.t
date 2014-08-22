@@ -23,8 +23,8 @@ my $cginame = File::Spec->catfile(dirname($0) . "/09-cgi-script.pl");
 # run the cgi
 #
 my @out = `$Config{"perlpath"} $cginame`;
-shift @out;
-shift @out;
+#shift @out;
+#shift @out;
 #diag $out;
 diag $pdfname;
 if (open my $fh, '>', $pdfname) {
